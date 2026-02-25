@@ -32,6 +32,8 @@ sudo rm -f "${NERDFONT_DIR}/${NERDFONT_ZIP}"
 echo -e "${GREEN}Hyprlain was successfully installed!"
 echo -e "You can now delete the installation folder."
 echo -e "A restart is required for changes to take effect.${NOCOLOR}"
-if confirmYn "Would you like to restart your device right now?"; then
-	reboot
+if [ -z "$AUTO_INSTALL" ]; then
+	if confirmYn "Would you like to restart your device right now?"; then
+		reboot
+	fi
 fi

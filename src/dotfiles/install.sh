@@ -8,10 +8,8 @@ if ! helpersourced; then
 	exit 1
 fi
 
-echo -e "${YELLOW}You might just want to keep these themes for the time in which you'll download their apps.${NOCOLOR}"
-if confirmYN "Would you like to download every theme's relative application?"; then
-	downdependencies "${GITSRC}/pacpkgs.lst" "${GITSRC}/aurpkgs.lst"
-fi
+echo -e "${YELLOW}Downloading every theme's relative application...${NOCOLOR}"
+downdependencies "${GITSRC}/pacpkgs.lst" "${GITSRC}/aurpkgs.lst"
 
 substitute "$BAKORDEL" "${HOME}/.local/share/audacious/Skins/lainampborders" "${GITSRC}/audacious/lainampborders"
 echo "skin=${HOME}/.local/share/audacious/Skins/lainampborders" >> "${GITSRC}/audacious/config"

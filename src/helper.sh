@@ -33,13 +33,14 @@ function getyay() {
 		sudo pacman -S --needed --noconfirm git base-devel
 		git clone --depth=1 https://aur.archlinux.org/yay.git
 		cd yay
-		makepkg -si || { echo -e "${RED}ERROR! Couldn't build yay, aborting.${NOCOLOR}"; exit 1; }
+		makepkg -si --noconfirm || { echo -e "${RED}ERROR! Couldn't build yay, aborting.${NOCOLOR}"; exit 1; }
 		cd ..
 		rm -rf yay
 	fi
 }
 
 function pause() {
+	if [ -n "$AUTO_INSTALL" ]; then return 0; fi
 	echo -e "${GREEN}Press Enter to continue...${NOCOLOR}"; read -rp ""
 }
 
@@ -47,6 +48,14 @@ function _confirm() { # _confirm <TXT> <Y/N/X>
 	local PROMPT="$1"
 	local DEFAULT="$2"
 	local CONFIRMATION
+
+	if [ -n "$AUTO_INSTALL" ]; then
+		if [[ "$DEFAULT" == "Y" ]] || [[ "$DEFAULT" == "X" ]]; then
+			return 0
+		elif [[ "$DEFAULT" == "N" ]]; then
+			return 1
+		fi
+	fi
 
 	while true; do
 		read -rp "$PROMPT" CONFIRMATION

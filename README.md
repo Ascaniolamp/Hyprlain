@@ -90,9 +90,9 @@ so if you're trying to install them on an X11 DE, you might want to check their 
 <strong><sup>IF YOU'D RATHER USE ANOTHER AUR HELPER, YOU'RE GOING TO HAVE TO MODIFY THE HELPER SCRIPT</sup></strong>
 </div>
 
-If you don't want to run the `install.sh` script manually, paste and run this into your terminal to run an all-in-one command:
+If you don't want to run the `install.sh` script manually, paste and run this into your terminal to run an all-in-one, completely unattended auto-install command:
 ```sh
-sudo pacman -Syu --needed git && git clone https://github.com/Ascaniolamp/Hyprlain.git && cd Hyprlain/src && ./install.sh
+sudo pacman -Syu --needed git && git clone https://github.com/4firas/Hyprlain-.git && cd Hyprlain- && bash auto-install.sh
 ```
 
 If you only want to download a single theme or configuration,

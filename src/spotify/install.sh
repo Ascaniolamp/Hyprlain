@@ -24,10 +24,10 @@ mkdir -p "${HOME}/.config/spotify"
 touch "${HOME}/.config/spotify/prefs"
 
 (curl -fsSL https://raw.githubusercontent.com/spicetify/spicetify-cli/master/install.sh | sh) || true
-spicetify
-spicetify backup apply
-spicetify update
-spicetify apply
+spicetify || true
+spicetify backup apply || true
+spicetify update || true
+spicetify apply || true
 curl -fsSL https://raw.githubusercontent.com/spicetify/spicetify-marketplace/main/resources/install.sh | sh
 killall spotify
 
