@@ -5,7 +5,7 @@
 CHEATSHEET="$HOME/.config/hypr/cheatsheet.md"
 
 if command -v glow &>/dev/null; then
-    kitty --class cheatsheet bash -c "glow -p '$CHEATSHEET'; echo; echo '--- Press any key to close ---'; read -rsn1"
+    kitty --class cheatsheet --hold -e glow ~/.config/hypr/cheatsheet.md
 else
-    kitty --class cheatsheet bash -c "less '$CHEATSHEET'"
+    kitty --class cheatsheet --hold -e less ~/.config/hypr/cheatsheet.md
 fi
