@@ -19,6 +19,7 @@ substitute "$BAKORDEL" "${HOME}/.config/waybar/config.jsonc" "${GITSRC}/waybar/c
 substitute "$BAKORDEL" "${HOME}/.config/waybar/power_menu.xml" "${GITSRC}/waybar/power_menu.xml"
 substitute "$BAKORDEL" "${HOME}/.config/waybar/style.css" "${GITSRC}/waybar/style.css"
 substitute "$BAKORDEL" "${HOME}/.config/hypr" "${GITSRC}/hypr"
+substitute "$BAKORDEL" "${HOME}/.config/hypr/cheatsheet.md" "${GITSRC}/hypr/cheatsheet.md"
 substitute "$BAKORDEL" "${HOME}/.config/dunst/dunstrc" "${GITSRC}/dunst/dunstrc"
 substitute "$BAKORDEL" "${HOME}/.config/assets" "${GITSRC}/assets"
 
