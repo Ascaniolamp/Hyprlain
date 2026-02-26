@@ -174,6 +174,11 @@ function downdependencies () {
 	# Read all packages (excluding empty lines) into an array
 	mapfile -t pacman_list < <(grep -v '^[[:space:]]*$' "$PACPKGS")
 	if [ ${#pacman_list[@]} -gt 0 ]; then
+		# Resolve known conflicts: archinstall pre-installs jack2 which conflicts with pipewire-jack
+		if printf '%s\n' "${pacman_list[@]}" | grep -qx "pipewire-jack" && pacman -Qq jack2 &>/dev/null; then
+			echo -e "${YELLOW}Removing conflicting jack2 in favour of pipewire-jack...${NOCOLOR}"
+			sudo pacman -Rdd --noconfirm jack2 || true
+		fi
 		echo -e "${YELLOW}Installing PACMAN packages...${NOCOLOR}"
 		sudo pacman -S --needed --noconfirm "${pacman_list[@]}" || echo -e "${RED}Warning: some pacman packages failed to install. Proceeding anyway.${NOCOLOR}"
 	fi
