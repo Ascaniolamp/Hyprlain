@@ -28,4 +28,4 @@ player_y=285
 playlist_visible=TRUE
 playlist_x=592
 playlist_y=517
-show_remaining_time=TRUE
+show_remaining_time=TRUEskin=/home/l4in/.local/share/audacious/Skins/lainampborders
