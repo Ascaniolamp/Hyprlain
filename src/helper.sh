@@ -168,17 +168,24 @@ function downdependencies () {
 	PACPKGS="$1"
 	AURPKGS="$2"
 
-	sudo pacman -Syu
-	while read -r pkg; do
-		[[ -z "$pkg" ]] && continue
-		( sudo pacman -S --needed --noconfirm "$pkg" || echo "ERROR! Skipping PACMAN package: $pkg" ) || true
-	done < "$PACPKGS"
+	echo -e "${YELLOW}Syncing pacman databases...${NOCOLOR}"
+	sudo pacman -Sy
 
-	yay -Syu
-	while read -r pkg; do
-		[[ -z "$pkg" ]] && continue
-		( yay -S --needed --noconfirm "$pkg" || echo "ERROR! Skipping AUR package: $pkg" ) || true
-	done < "$AURPKGS"
+	# Read all packages (excluding empty lines) into an array
+	mapfile -t pacman_list < <(grep -v '^[[:space:]]*$' "$PACPKGS")
+	if [ ${#pacman_list[@]} -gt 0 ]; then
+		echo -e "${YELLOW}Installing PACMAN packages...${NOCOLOR}"
+		sudo pacman -S --needed --noconfirm "${pacman_list[@]}" || echo -e "${RED}Warning: some pacman packages failed to install. Proceeding anyway.${NOCOLOR}"
+	fi
+
+	echo -e "${YELLOW}Syncing AUR databases...${NOCOLOR}"
+	yay -Sy
+
+	mapfile -t aur_list < <(grep -v '^[[:space:]]*$' "$AURPKGS")
+	if [ ${#aur_list[@]} -gt 0 ]; then
+		echo -e "${YELLOW}Installing AUR packages...${NOCOLOR}"
+		yay -S --needed --noconfirm "${aur_list[@]}" || echo -e "${RED}Warning: some AUR packages failed to install. Proceeding anyway.${NOCOLOR}"
+	fi
 }
 
 function helpersourced() {
