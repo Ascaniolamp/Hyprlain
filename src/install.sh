@@ -25,7 +25,7 @@ else
 	echo -e "${GREEN}AdwaitaMono Nerd Font already installed, skipping download...${NOCOLOR}"
 fi
 
-# "${GITSRC}/albert/install.sh" "$BAKORDEL"
+"${GITSRC}/albert/install.sh" "$BAKORDEL"
 "${GITSRC}/dotfiles/install.sh" "$BAKORDEL"
 "${GITSRC}/gtkqtxdg/install.sh" "$BAKORDEL"
 "${GITSRC}/hyprland/install.sh" "$BAKORDEL"

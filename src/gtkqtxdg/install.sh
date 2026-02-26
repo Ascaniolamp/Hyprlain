@@ -16,6 +16,7 @@ substitute "$BAKORDEL" "${HOME}/.config/gtk-3.0/settings.ini" "${GITSRC}/gtk-3.0
 substitute "$BAKORDEL" "${HOME}/.config/gtk-4.0/settings.ini" "${GITSRC}/gtk-4.0/settings.ini"
 substitute "$BAKORDEL" "/usr/share/themes/hyprlain" "${GITSRC}/hyprlain"
 substitute "$BAKORDEL" "/usr/share/icons/hyprlaicons" "${GITSRC}/hyprlaicons"
+substitute "$BAKORDEL" "${HOME}/.config/kdeglobals" "${GITSRC}/kdeglobals"
 
 substitute "$BAKORDEL" "${HOME}/.config/xdg-desktop-portal/hyprland-portals.conf" "${GITSRC}/hyprland-portals.conf"
 substitute "$BAKORDEL" "${HOME}/.config/xsettingsd.conf" "${GITSRC}/xsettingsd.conf"
