@@ -10,8 +10,12 @@ fi
 
 downdependencies "${GITSRC}/pacpkgs.lst" "${GITSRC}/aurpkgs.lst"
 
-echo "prefs_path = ${HOME}/.config/spotify/prefs" >> "${GITSRC}/config-xpui.ini"
-echo "spotify_path = ${HOME}/.local/share/spotify-launcher/install/usr/share/spotify/" >> "${GITSRC}/config-xpui.ini"
+if ! grep -q "prefs_path" "${GITSRC}/config-xpui.ini"; then
+	echo "prefs_path = ${HOME}/.config/spotify/prefs" >> "${GITSRC}/config-xpui.ini"
+fi
+if ! grep -q "spotify_path" "${GITSRC}/config-xpui.ini"; then
+	echo "spotify_path = ${HOME}/.local/share/spotify-launcher/install/usr/share/spotify/" >> "${GITSRC}/config-xpui.ini"
+fi
 substitute "$BAKORDEL" "${HOME}/.config/spicetify/Themes/Hyprlain" "${GITSRC}/Hyprlain"
 substitute "$BAKORDEL" "${HOME}/.config/spicetify/config-xpui.ini" "${GITSRC}/config-xpui.ini"
 

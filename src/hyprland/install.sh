@@ -12,7 +12,11 @@ downdependencies "${GITSRC}/pacpkgs.lst" "${GITSRC}/aurpkgs.lst"
 
 getpkg zsh
 handleold "$BAKORDEL" "${HOME}/.oh-my-zsh"
-RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+if [ ! -d "${HOME}/.oh-my-zsh" ]; then
+	RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+else
+	echo -e "${YELLOW}Oh-My-Zsh already installed, skipping...${NOCOLOR}"
+fi
 
 substitute "$BAKORDEL" "${HOME}/.config/wlogout/style.css" "${GITSRC}/wlogout/style.css"
 substitute "$BAKORDEL" "${HOME}/.config/waybar/config.jsonc" "${GITSRC}/waybar/config.jsonc"
@@ -31,9 +35,16 @@ substitute "$BAKORDEL" "${HOME}/.config/kitty/current-theme.conf" "${GITSRC}/kit
 substitute "$BAKORDEL" "${HOME}/.config/kitty/themes/hyprlain.conf" "${GITSRC}/kitty/themes/hyprlain.conf"
 substitute "$BAKORDEL" "${HOME}/.config/kitty/themes/hyprlain.conf-colors" "${GITSRC}/kitty/themes/hyprlain-colors.conf"
 
-cat "${GITSRC}/.profile" >> "${HOME}/.profile"
+if ! grep -q "source \${HOME}/.profile" "${HOME}/.profile" 2>/dev/null && ! grep -q "export PATH" "${HOME}/.profile" 2>/dev/null; then
+	cat "${GITSRC}/.profile" >> "${HOME}/.profile"
+fi
+
 DOTPROFILE_SHLINE="[[ -f ~/.profile ]] && . ~/.profile"
-echo "$DOTPROFILE_SHLINE" >> "${HOME}/.bashrc"
-echo "$DOTPROFILE_SHLINE" >> "${HOME}/.zshrc"
+if ! grep -qF "$DOTPROFILE_SHLINE" "${HOME}/.bashrc" 2>/dev/null; then
+	echo "$DOTPROFILE_SHLINE" >> "${HOME}/.bashrc"
+fi
+if ! grep -qF "$DOTPROFILE_SHLINE" "${HOME}/.zshrc" 2>/dev/null; then
+	echo "$DOTPROFILE_SHLINE" >> "${HOME}/.zshrc"
+fi
 
 echo -e "${GREEN}Hyprland Hyprlain theme installed successfully.${NOCOLOR}"

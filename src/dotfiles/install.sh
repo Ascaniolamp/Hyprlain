@@ -17,12 +17,24 @@ substitute "$BAKORDEL" "${HOME}/.config/audacious/config" "${GITSRC}/audacious/c
 
 echo -e "${YELLOW}To install the Firefox theme, follow the README's instructions!${NOCOLOR}"
 
-cat "${GITSRC}/.profile" >> "${HOME}/.profile"
+if ! grep -q "source \${HOME}/.profile" "${HOME}/.profile" 2>/dev/null && ! grep -q "export PATH" "${HOME}/.profile" 2>/dev/null; then
+	cat "${GITSRC}/.profile" >> "${HOME}/.profile"
+fi
+
 DOTPROFILE_SHLINE="[[ -f ~/.profile ]] && . ~/.profile"
-echo "$DOTPROFILE_SHLINE" >> "${HOME}/.bashrc"
-echo "$DOTPROFILE_SHLINE" >> "${HOME}/.zshrc"
+if ! grep -qF "$DOTPROFILE_SHLINE" "${HOME}/.bashrc" 2>/dev/null; then
+	echo "$DOTPROFILE_SHLINE" >> "${HOME}/.bashrc"
+fi
+if ! grep -qF "$DOTPROFILE_SHLINE" "${HOME}/.zshrc" 2>/dev/null; then
+	echo "$DOTPROFILE_SHLINE" >> "${HOME}/.zshrc"
+fi
 
 getpkg git
-git clone --depth=1 https://github.com/uiriansan/LainGrubTheme && cd LainGrubTheme && ./install.sh && ./patch_entries.sh
+if [ ! -d "LainGrubTheme" ]; then
+	git clone --depth=1 https://github.com/uiriansan/LainGrubTheme && cd LainGrubTheme && ./install.sh && ./patch_entries.sh
+else
+	echo -e "${YELLOW}LainGrubTheme directory already exists, skipping clone...${NOCOLOR}"
+	cd LainGrubTheme && ./install.sh && ./patch_entries.sh
+fi
 
 echo -e "${GREEN}Hyprlain dotfiles installed successfully.${NOCOLOR}"
