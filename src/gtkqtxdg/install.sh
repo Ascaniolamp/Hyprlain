@@ -20,15 +20,16 @@ substitute "$BAKORDEL" "/usr/share/icons/hyprlaicons" "${GITSRC}/hyprlaicons"
 substitute "$BAKORDEL" "${HOME}/.config/xdg-desktop-portal/hyprland-portals.conf" "${GITSRC}/hyprland-portals.conf"
 substitute "$BAKORDEL" "${HOME}/.config/xsettingsd.conf" "${GITSRC}/xsettingsd.conf"
 
-if ! grep -q "color_scheme_path" "${GITSRC}/qt5ct/qt5ct.conf"; then
-	echo "color_scheme_path=${HOME}/.config/qt5ct/colors/Hyprlain.conf" >> "${GITSRC}/qt5ct/qt5ct.conf"
-fi
+# Replace the placeholder username with the actual home path before deploying
+sed -i "s|/home/USER_PLACEHOLDER|${HOME}|g" "${GITSRC}/qt5ct/qt5ct.conf"
 substitute "$BAKORDEL" "${HOME}/.config/qt5ct/qt5ct.conf" "${GITSRC}/qt5ct/qt5ct.conf"
 substitute "$BAKORDEL" "${HOME}/.config/qt5ct/colors/Hyprlain.conf" "${GITSRC}/qt5ct/Hyprlain.conf"
-if ! grep -q "color_scheme_path" "${GITSRC}/qt6ct/qt6ct.conf"; then
-	echo "color_scheme_path=${HOME}/.config/qt6ct/colors/Hyprlain.conf" >> "${GITSRC}/qt6ct/qt6ct.conf"
-fi
+# Reset the placeholder back in the git source so future runs can sed it again
+sed -i "s|${HOME}|/home/USER_PLACEHOLDER|g" "${GITSRC}/qt5ct/qt5ct.conf"
+
+sed -i "s|/home/USER_PLACEHOLDER|${HOME}|g" "${GITSRC}/qt6ct/qt6ct.conf"
 substitute "$BAKORDEL" "${HOME}/.config/qt6ct/qt6ct.conf" "${GITSRC}/qt6ct/qt6ct.conf"
 substitute "$BAKORDEL" "${HOME}/.config/qt6ct/colors/Hyprlain.conf" "${GITSRC}/qt6ct/Hyprlain.conf"
+sed -i "s|${HOME}|/home/USER_PLACEHOLDER|g" "${GITSRC}/qt6ct/qt6ct.conf"
 
 echo -e "${GREEN}GTK & Qt Hyprlain themes installed successfully.${NOCOLOR}"
