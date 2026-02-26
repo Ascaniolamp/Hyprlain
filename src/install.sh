@@ -15,10 +15,15 @@ getpkg unzip
 NERDFONT_DIR=/usr/local/share/fonts/ttf/AdwaitaMonoNerd
 NERDFONT_URL=https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/AdwaitaMono.zip
 NERDFONT_ZIP=$(basename -- "$NERDFONT_URL")
-handleold "$BAKORDEL" "$NERDFONT_DIR"
-sudo wget "$NERDFONT_URL" -P "$NERDFONT_DIR"
-sudo unzip -o "${NERDFONT_DIR}/${NERDFONT_ZIP}" -d "$NERDFONT_DIR"
-sudo rm -f "${NERDFONT_DIR}/${NERDFONT_ZIP}"
+if [ -z "$(ls -A "$NERDFONT_DIR" 2>/dev/null)" ] || [[ "$BAKORDEL" == "--no-preserve" ]]; then
+	echo -e "${YELLOW}Downloading AdwaitaMono Nerd Font...${NOCOLOR}"
+	handleold "$BAKORDEL" "$NERDFONT_DIR"
+	sudo wget "$NERDFONT_URL" -P "$NERDFONT_DIR"
+	sudo unzip -o "${NERDFONT_DIR}/${NERDFONT_ZIP}" -d "$NERDFONT_DIR"
+	sudo rm -f "${NERDFONT_DIR}/${NERDFONT_ZIP}"
+else
+	echo -e "${GREEN}AdwaitaMono Nerd Font already installed, skipping download...${NOCOLOR}"
+fi
 
 # "${GITSRC}/albert/install.sh" "$BAKORDEL"
 "${GITSRC}/dotfiles/install.sh" "$BAKORDEL"

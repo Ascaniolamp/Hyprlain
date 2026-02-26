@@ -23,7 +23,7 @@ sudo chmod a+wr /opt/spotify/Apps -R
 mkdir -p "${HOME}/.config/spotify"
 touch "${HOME}/.config/spotify/prefs"
 
-(curl -fsSL https://raw.githubusercontent.com/spicetify/spicetify-cli/master/install.sh | sh) || true
+(curl -fsSL https://raw.githubusercontent.com/spicetify/spicetify-cli/master/install.sh | sed "s/read -r choice < \/dev\/tty/choice=Y/g" | sh) || true
 spicetify || true
 spicetify backup apply || true
 spicetify update || true
