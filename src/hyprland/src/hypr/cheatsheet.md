@@ -1,5 +1,24 @@
 # Omarchy x Hyprlain Cheatsheet
 
+## Welcome to Hyprland! (Desktop Navigation Guide)
+
+Welcome to your new tiling workspace! If you are new to this workflow, here is a quick crash course:
+
+1. **The "Super" Key is Everything**: The "Super" key (often the Windows/Command key) is your main modifier. You will hold it down for almost every action.
+2. **Opening Apps**: Press `Super + Space` to open your app launcher. Start typing the name of the app you want and press `Enter`. You can also press `Super + Return` to instantly open a terminal.
+3. **Managing Windows**: When you open multiple apps, they will automatically split the screen (tile).
+   - Use `Super + Arrow Keys` to move your focus between tiled windows.
+   - Want to close the app you are currently focused on? Just press `Super + W`.
+   - Need to swap their positions? Press `Super + Shift + Arrow Keys`.
+4. **Resizing & Floating**: 
+   - You can resize any focused window by pressing `Super + Equal` (grow) or `Super + Minus` (shrink).
+   - Sometimes an app looks weird when tiled (like a calculator or pop-up). Press `Super + T` to detach it so it "floats" above other windows. You can move floating windows using your mouse by holding `Super` + Left Click and dragging.
+5. **Workspaces (Virtual Desktops)**:
+   - Your screen can only hold so many windows before getting cluttered. Press `Super + 1`, `Super + 2`, etc., to jump to a fresh, empty workspace.
+   - To cleanly send the app you are currently looking at to another workspace, press `Super + Shift + 1` (or 2, 3, etc.).
+   - Cycle quickly between your workspaces on the fly using `Super + Tab` and `Super + Shift + Tab`.
+6. **System & Media**: Press `Super + Alt + Space` to open the central Omarchy control menu, or use the dedicated shortcuts in the tables below for audio, bluetooth, and wifi.
+
 ## Navigating
 | Hotkey | Function |
 | --- | --- |
