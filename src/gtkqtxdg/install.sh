@@ -20,10 +20,14 @@ substitute "$BAKORDEL" "/usr/share/icons/hyprlaicons" "${GITSRC}/hyprlaicons"
 substitute "$BAKORDEL" "${HOME}/.config/xdg-desktop-portal/hyprland-portals.conf" "${GITSRC}/hyprland-portals.conf"
 substitute "$BAKORDEL" "${HOME}/.config/xsettingsd.conf" "${GITSRC}/xsettingsd.conf"
 
-echo "color_scheme_path=${HOME}/.config/qt5ct/colors/Hyprlain.conf" >> "${GITSRC}/qt5ct/qt5ct.conf"
+if ! grep -q "color_scheme_path" "${GITSRC}/qt5ct/qt5ct.conf"; then
+	echo "color_scheme_path=${HOME}/.config/qt5ct/colors/Hyprlain.conf" >> "${GITSRC}/qt5ct/qt5ct.conf"
+fi
 substitute "$BAKORDEL" "${HOME}/.config/qt5ct/qt5ct.conf" "${GITSRC}/qt5ct/qt5ct.conf"
 substitute "$BAKORDEL" "${HOME}/.config/qt5ct/colors/Hyprlain.conf" "${GITSRC}/qt5ct/Hyprlain.conf"
-echo "color_scheme_path=${HOME}/.config/qt6ct/colors/Hyprlain.conf" >> "${GITSRC}/qt6ct/qt6ct.conf"
+if ! grep -q "color_scheme_path" "${GITSRC}/qt6ct/qt6ct.conf"; then
+	echo "color_scheme_path=${HOME}/.config/qt6ct/colors/Hyprlain.conf" >> "${GITSRC}/qt6ct/qt6ct.conf"
+fi
 substitute "$BAKORDEL" "${HOME}/.config/qt6ct/qt6ct.conf" "${GITSRC}/qt6ct/qt6ct.conf"
 substitute "$BAKORDEL" "${HOME}/.config/qt6ct/colors/Hyprlain.conf" "${GITSRC}/qt6ct/Hyprlain.conf"
 
