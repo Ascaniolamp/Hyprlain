@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
 # Auto-Install Script for Hyprlain
-# This script is designed to run completely unattended on a fresh Arch Linux install.
-
-set -e
+# Runs completely unattended on a fresh Arch Linux + Hyprland install.
 
 RED="\033[0;31m"
 GREEN="\033[0;32m"
@@ -15,10 +13,10 @@ echo -e "${GREEN}Starting unattended Hyprlain installation...${NOCOLOR}"
 # Force non-interactive modes
 export RUNZSH=no
 export CHSH=yes
+export AUTO_INSTALL=1
 
 # Install necessary base packages
 echo -e "${YELLOW}Installing base dependencies (git, base-devel)...${NOCOLOR}"
-sudo pacman -Syu --noconfirm
 sudo pacman -S --needed --noconfirm git base-devel
 
 # Auto-install yay if not present
@@ -30,9 +28,6 @@ if ! command -v yay &> /dev/null; then
 	cd -
 	rm -rf /tmp/yay
 fi
-
-# Override helper functions to prevent pauses
-export AUTO_INSTALL=1
 
 # Run the main installation script and default to backup
 cd src

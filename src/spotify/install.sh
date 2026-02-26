@@ -20,10 +20,9 @@ substitute "$BAKORDEL" "${HOME}/.config/spicetify/Themes/Hyprlain" "${GITSRC}/Hy
 substitute "$BAKORDEL" "${HOME}/.config/spicetify/config-xpui.ini" "${GITSRC}/config-xpui.ini"
 
 getpkg spotify
-spotify&
-mkdir -p /opt/spotify/Apps
-sudo chmod a+wr /opt/spotify
-sudo chmod a+wr /opt/spotify/Apps -R
+mkdir -p /opt/spotify/Apps || true
+sudo chmod a+wr /opt/spotify 2>/dev/null || true
+sudo chmod a+wr /opt/spotify/Apps -R 2>/dev/null || true
 mkdir -p "${HOME}/.config/spotify"
 touch "${HOME}/.config/spotify/prefs"
 
@@ -32,7 +31,7 @@ spicetify || true
 spicetify backup apply || true
 spicetify update || true
 spicetify apply || true
-curl -fsSL https://raw.githubusercontent.com/spicetify/spicetify-marketplace/main/resources/install.sh | sh
-killall spotify
+curl -fsSL https://raw.githubusercontent.com/spicetify/spicetify-marketplace/main/resources/install.sh | sh || true
+killall spotify 2>/dev/null || true
 
 echo -e "${GREEN}Spotify Hyprlain theme installed successfully.${NOCOLOR}"

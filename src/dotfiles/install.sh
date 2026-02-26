@@ -12,7 +12,9 @@ echo -e "${YELLOW}Downloading every theme's relative application...${NOCOLOR}"
 downdependencies "${GITSRC}/pacpkgs.lst" "${GITSRC}/aurpkgs.lst"
 
 substitute "$BAKORDEL" "${HOME}/.local/share/audacious/Skins/lainampborders" "${GITSRC}/audacious/lainampborders"
-echo "skin=${HOME}/.local/share/audacious/Skins/lainampborders" >> "${GITSRC}/audacious/config"
+if ! grep -q "skin=" "${GITSRC}/audacious/config" 2>/dev/null; then
+	echo "skin=${HOME}/.local/share/audacious/Skins/lainampborders" >> "${GITSRC}/audacious/config"
+fi
 substitute "$BAKORDEL" "${HOME}/.config/audacious/config" "${GITSRC}/audacious/config"
 
 echo -e "${YELLOW}To install the Firefox theme, follow the README's instructions!${NOCOLOR}"
