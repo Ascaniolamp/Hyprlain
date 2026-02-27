@@ -41,12 +41,32 @@ if [ "$IS_MAC" -eq 1 ]; then
     # 1. Wifi Fix: Module Blacklisting & Firmware
     echo -e "${YELLOW}Configuring Wifi modules (Broadcom)...${NOCOLOR}"
     
-    # Use MikeRatcliffe's Gist for the 13,2 firmware configuration (Verified link)
-    if [ ! -f "/lib/firmware/brcm/brcmfmac43602-pcie.txt" ] || [ $(stat -c%s "/lib/firmware/brcm/brcmfmac43602-pcie.txt") -lt 100 ]; then
+    FW_BRCM="/lib/firmware/brcm"
+    CHIP="brcmfmac43602-pcie"
+    MACHINE="Apple Inc.-MacBookPro13,2"
+    
+    sudo mkdir -p "$FW_BRCM"
+    
+    # Acquire firmware configuration (.txt)
+    if [ ! -f "$FW_BRCM/$CHIP.txt" ] || [ $(stat -c%s "$FW_BRCM/$CHIP.txt") -lt 100 ]; then
         echo -e "${YELLOW}Downloading Broadcom firmware configuration...${NOCOLOR}"
-        sudo mkdir -p /lib/firmware/brcm
-        sudo curl -L https://gist.githubusercontent.com/MikeRatcliffe/9614c16a8ea09731a9d5e91685bd8c80/raw/brcmfmac43602-pcie.txt -o /lib/firmware/brcm/brcmfmac43602-pcie.txt
+        sudo curl -L https://gist.githubusercontent.com/MikeRatcliffe/9614c16a8ea09731a9d5e91685bd8c80/raw/brcmfmac43602-pcie.txt -o "$FW_BRCM/$CHIP.txt"
     fi
+
+    # Acquire binary firmware (bin/clm_blob) from official linux-firmware repo to prevent corruption
+    # We unzstd the existing ones first if they appear to be corrupted (HTML document)
+    for ext in "bin" "clm_blob"; do
+        if [ ! -f "$FW_BRCM/$CHIP.$ext" ] || grep -q "HTML" "$FW_BRCM/$CHIP.$ext" 2>/dev/null; then
+            echo -e "${YELLOW}Acquiring raw binary $ext for Broadcom...${NOCOLOR}"
+            sudo curl -L -o "$FW_BRCM/$CHIP.$ext" "https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/brcm/$CHIP.$ext"
+        fi
+    done
+
+    # Standardize names for machine-specific queries (Kernel 6.x requirements)
+    echo -e "${YELLOW}Standardizing firmware names for MacBook model...${NOCOLOR}"
+    sudo cp "$FW_BRCM/$CHIP.bin" "$FW_BRCM/$CHIP.$MACHINE.bin" 2>/dev/null
+    sudo cp "$FW_BRCM/$CHIP.txt" "$FW_BRCM/$CHIP.$MACHINE.txt" 2>/dev/null
+    sudo cp "$FW_BRCM/$CHIP.clm_blob" "$FW_BRCM/$CHIP.$MACHINE.clm_blob" 2>/dev/null
     
     WIFI_CONF="/etc/modprobe.d/hyprlain-mac-wifi.conf"
     sudo bash -c "cat > $WIFI_CONF <<EOF
@@ -68,18 +88,21 @@ EOF"
     SPI_SRC_DIR=$(ls -d /usr/src/macbook12-spi-driver-* 2>/dev/null | tail -n 1)
     if [ -n "$SPI_SRC_DIR" ]; then
         echo -e "${YELLOW}Patching SPI driver source in $SPI_SRC_DIR for kernel 6.x...${NOCOLOR}"
-        # Fix unaligned.h move
+        # Fix signatures and returns for functions changed to void in kernel 6.x
+        for file in "apple-ib-tb.c" "apple-ib-als.c" "applespi.c" "apple-ibridge.c"; do
+            [ ! -f "$SPI_SRC_DIR/$file" ] && continue
+            sudo sed -i 's/static int appletb_platform_remove/static void appletb_platform_remove/g' "$SPI_SRC_DIR/$file"
+            sudo sed -i 's/static int appleals_platform_remove/static void appleals_platform_remove/g' "$SPI_SRC_DIR/$file"
+            sudo sed -i 's/static int applespi_remove/static void applespi_remove/g' "$SPI_SRC_DIR/$file"
+            sudo sed -i 's/static int appleacpi_remove/static void appleacpi_remove/g' "$SPI_SRC_DIR/$file"
+            sudo sed -i 's/static int appleib_remove/static void appleib_remove/g' "$SPI_SRC_DIR/$file"
+            # Remove all forms of 'return 0;' and 'return rc;' inside these functions
+            sudo sed -i '/static void .*_remove/,/}/ s/return .*;//' "$SPI_SRC_DIR/$file"
+        done
+        # Other necessary 6.x fixes
         sudo sed -i 's#asm/unaligned.h#linux/unaligned.h#g' "$SPI_SRC_DIR/applespi.c"
-        # Fix acpi_driver owner removal
         sudo sed -i 's/\.owner[[:space:]]*=[[:space:]]*THIS_MODULE,//g' "$SPI_SRC_DIR/apple-ibridge.c"
-        # Fix report_fixup const return type
         sudo sed -i 's/static __u8 \*appleib_report_fixup/static const __u8 \*appleib_report_fixup/g' "$SPI_SRC_DIR/apple-ibridge.c"
-        # NEW: Fix remove function signature (int -> void) for 6.x kernels
-        sudo sed -i 's/static int appletb_platform_remove/static void appletb_platform_remove/g' "$SPI_SRC_DIR/apple-ib-tb.c"
-        sudo sed -i '/static void appletb_platform_remove/,/}/ s/return 0;//' "$SPI_SRC_DIR/apple-ib-tb.c"
-        sudo sed -i 's/static int appleals_platform_remove/static void appleals_platform_remove/g' "$SPI_SRC_DIR/apple-ib-als.c"
-        sudo sed -i '/static void appleals_platform_remove/,/}/ s/return 0;//' "$SPI_SRC_DIR/apple-ib-als.c"
-        # NEW: Fix no_llseek removal
         sudo sed -i 's/no_llseek/noop_llseek/g' "$SPI_SRC_DIR/applespi.c"
     fi
 
@@ -99,6 +122,8 @@ EOF"
     sudo dkms install -m snd-hda-macbookpro -v 0.1 -k "$(uname -r)" --force || true
 
     echo -e "${YELLOW}Applying Audio model overrides...${NOCOLOR}"
+    # Remove any old conflicting configs from previous runs
+    sudo rm -f /etc/modprobe.d/hyprlain-mac-audio.conf
     # Per user research: macbook-pro-v1 is superior for 13,2 model
     AUDIO_CONF="/etc/modprobe.d/apple-audio.conf"
     sudo bash -c "cat > $AUDIO_CONF <<EOF
@@ -107,7 +132,7 @@ EOF"
 options snd-hda-intel model=macbook-pro-v1
 EOF"
 
-    # 4. Final Polish: Fix ownership of config files (installer often leaves them as root)
+    # 4. Final Polish: Fix ownership of config files
     echo -e "${YELLOW}Restoring user l4in ownership to configuration files...${NOCOLOR}"
     sudo chown -R l4in:l4in "$HOME/.config" "$HOME/Hyprlain-" 2>/dev/null || true
     echo -e "${GREEN}MacBook hardware fixes applied successfully!${NOCOLOR}"

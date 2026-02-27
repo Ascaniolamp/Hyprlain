@@ -1,0 +1,136 @@
+--- SYSTEM INFO ---
+Linux copland 6.12.74-1-lts #1 SMP PREEMPT_DYNAMIC Thu, 19 Feb 2026 16:48:19 +0000 x86_64 GNU/Linux
+8821au/5.12.5.2.r248.g250cdad, 6.12.74-1-lts, x86_64: installed
+broadcom-wl/6.30.223.271, 6.12.74-1-lts, x86_64: installed
+broadcom-wl/6.30.223.271, 6.18.9-arch1-2, x86_64: installed
+macbook12-spi-driver/0+git.315: added
+nvidia/590.48.01, 6.12.74-1-lts, x86_64: installed
+nvidia/590.48.01, 6.18.9-arch1-2, x86_64: installed
+rtl88x2bu/5.13.1.r212.825556e, 6.12.74-1-lts, x86_64: installed
+rtl88x2bu/5.13.1.r212.825556e, 6.18.9-arch1-2, x86_64: installed
+snd-hda-macbookpro/0.1, 6.12.74-1-lts, x86_64: installed (Original modules exist)
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: enp0s20f0u8u4: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc fq_codel state DOWN mode DEFAULT group default qlen 1000
+    link/ether 00:e0:4c:68:1b:cf brd ff:ff:ff:ff:ff:ff
+    altname enx00e04c681bcf
+3: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP mode DORMANT group default qlen 1000
+    link/ether 98:ba:5f:cf:d5:61 brd ff:ff:ff:ff:ff:ff
+
+--- DMESG (RELEVANT) ---
+[    0.000000] efi: EFI v2.4 by Apple
+[    0.000000] efi: Apple Mac detected, using EFI v1.10 runtime services only
+[    0.000000] DMI: Apple Inc. MacBookPro13,2/Mac-66E35819EE2D0D05, BIOS 529.120.1.0.0 03/14/2024
+[    0.014503] ACPI: RSDP 0x0000000078FFE014 000024 (v02 APPLE )
+[    0.014507] ACPI: XSDT 0x0000000078FFD0E8 0000BC (v01 APPLE  Apple00  00000000      01000013)
+[    0.014513] ACPI: FACP 0x0000000078FF8000 0000F4 (v05 APPLE  Apple00  00000000 Loki 0000005F)
+[    0.014519] ACPI: DSDT 0x0000000078FEB000 0085AC (v02 APPLE  MacBookP 00130002 INTL 20140424)
+[    0.014527] ACPI: ECDT 0x0000000078FFA000 000053 (v01 APPLE  Apple00  00000001 Loki 0000005F)
+[    0.014530] ACPI: HPET 0x0000000078FF7000 000038 (v01 APPLE  Apple00  00000001 Loki 0000005F)
+[    0.014533] ACPI: APIC 0x0000000078FF6000 0000BC (v02 APPLE  Apple00  00000001 Loki 0000005F)
+[    0.014536] ACPI: MCFG 0x0000000078FF5000 00003C (v01 APPLE  Apple00  00000001 Loki 0000005F)
+[    0.014538] ACPI: SBST 0x0000000078FF4000 000030 (v01 APPLE  Apple00  00000001 Loki 0000005F)
+[    0.014541] ACPI: SSDT 0x0000000078FEA000 000024 (v01 APPLE  SmcDppt  00001000 INTL 20140424)
+[    0.014544] ACPI: SSDT 0x0000000078FE5000 000031 (v01 APPLE  SsdtS3   00001000 INTL 20140424)
+[    0.014547] ACPI: SSDT 0x0000000078FE4000 000111 (v01 APPLE  SataAhci 00001000 INTL 20140424)
+[    0.014550] ACPI: SSDT 0x0000000078FE3000 0000B8 (v01 APPLE  Sdxc     00001000 INTL 20140424)
+[    0.014552] ACPI: SSDT 0x0000000078FDA000 008BA2 (v02 APPLE  TbtOnPCH 00001000 INTL 20140424)
+[    0.014555] ACPI: SSDT 0x0000000078FD6000 000B2A (v02 APPLE  Xhci     00001000 INTL 20140424)
+[    0.014572] ACPI: DMAR 0x0000000078FD0000 000118 (v01 APPLE  SKL      00000001 INTL 00000001)
+[    0.014599] ACPI: DMI detected to setup _OSI("Darwin"): Apple hardware
+[    0.105195] DMAR: ANDD device: 8 name: \_SB.PCI0.SPI1
+[    0.133743] ACPI: [Firmware Bug]: BIOS _OSI(Linux) query ignored
+[    0.694927] usb 1-3: Manufacturer: Apple Inc.
+[    3.149096] i915 0000:00:02.0: [drm] Finished loading DMC firmware i915/skl_dmc_ver1_27.bin (v1.27)
+[    8.489619] input: Apple Inc. iBridge as /devices/pci0000:00/0000:00:14.0/usb1/1-3/1-3:1.2/0003:05AC:8600.0001/input/input5
+[    8.520153] input: Apple SPI Keyboard as /devices/pci0000:00/0000:00:1e.3/pxa2xx-spi.3/spi_master/spi2/spi-APP000D:00/input/input6
+[    8.639183] hid-generic 0003:05AC:8600.0001: input,hidraw0: USB HID v1.01 Keyboard [Apple Inc. iBridge] on usb-0000:00:14.0-3/input2
+[    8.640195] hid-generic 0003:05AC:8600.0002: hiddev96,hidraw1: USB HID v1.01 Device [Apple Inc. iBridge] on usb-0000:00:14.0-3/input3
+[    8.656156] hid-sensor-hub 0003:05AC:8600.0002: hiddev96,hidraw1: USB HID v1.01 Device [Apple Inc. iBridge] on usb-0000:00:14.0-3/input3
+[    8.664925] input: Apple SPI Touchpad as /devices/pci0000:00/0000:00:1e.3/pxa2xx-spi.3/spi_master/spi2/spi-APP000D:00/input/input7
+[    8.666973] applespi spi-APP000D:00: modeswitch done.
+[   12.616380] systemd[1]: Clear Stale Hibernate Storage Info skipped, unmet condition check ConditionPathExists=/sys/firmware/efi/efivars/HibernateLocation-8cf2644b-4b0b-428f-9387-6d876050dc67
+[   16.515103] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
+[   16.587032] applesmc: key=873 fan=2 temp=41 index=40 acc=0 lux=0 kbd=0
+[   16.588151] applesmc applesmc.768: hwmon_device_register() is deprecated. Please convert the driver to use hwmon_device_register_with_info().
+[   16.901946] Bluetooth: hci0: BCM20703A2 Generic UART UHE Apple 40MHz wlcsp_x100
+[   16.914198] snd_hda_intel 0000:00:1f.3: bound 0000:00:02.0 (ops i915_audio_component_bind_ops [i915])
+[   16.970497] Bluetooth: hci0: BCM: firmware Patch file not found, tried:
+[   16.970503] Bluetooth: hci0: BCM: 'brcm/BCM.hcd'
+[   16.970797] usbcore: registered new interface driver brcmfmac
+[   17.015506] snd_hda_intel: Primary patch_cs8409
+[   17.015513] snd_hda_intel: Primary patch_cs8409 NOT FOUND trying APPLE
+[   17.015848] snd_hda_codec_cs8409 hdaudioC0D0: autoconfig for CS8409: line_outs=2 (0x24/0x25/0x0/0x0/0x0) type:speaker
+[   17.015856] snd_hda_codec_cs8409 hdaudioC0D0:    speaker_outs=0 (0x0/0x0/0x0/0x0/0x0)
+[   17.015861] snd_hda_codec_cs8409 hdaudioC0D0:    hp_outs=1 (0x2c/0x0/0x0/0x0/0x0)
+[   17.015866] snd_hda_codec_cs8409 hdaudioC0D0:    mono: mono_out=0x0
+[   17.015868] snd_hda_codec_cs8409 hdaudioC0D0:    inputs:
+[   17.015871] snd_hda_codec_cs8409 hdaudioC0D0:      Internal Mic=0x44
+[   17.015875] snd_hda_codec_cs8409 hdaudioC0D0:      Mic=0x3c
+[   17.018769] snd_hda_intel: hda_generic_check_dyn_adc_switch shrinking
+[   17.072390] brcmfmac: brcmf_fw_alloc_request: using brcm/brcmfmac43602-pcie for chip BCM43602/2
+[   17.072459] brcmfmac 0000:02:00.0: Direct firmware load for brcm/brcmfmac43602-pcie.Apple Inc.-MacBookPro13,2.bin failed with error -2
+[   17.139115] brcmfmac 0000:02:00.0: Direct firmware load for brcm/brcmfmac43602-pcie.clm_blob failed with error -2
+[   17.139200] brcmfmac 0000:02:00.0: Direct firmware load for brcm/brcmfmac43602-pcie.txcap_blob failed with error -2
+[   19.302581] usbcore: registered new device driver apple-mfi-fastcharge
+[   19.572242] ieee80211 phy0: brcmf_msgbuf_query_dcmd: Timeout on response for query command
+[   19.572263] ieee80211 phy0: brcmf_c_preinit_dcmds: Retrieving cur_etheraddr failed, -5
+[   19.572277] ieee80211 phy0: brcmf_bus_started: failed: -5
+[   19.572322] ieee80211 phy0: brcmf_attach: dongle is not responding: err=-5
+[   19.597291] brcmfmac 0000:02:00.0: brcmf_pcie_setup: Dongle setup failed
+[   19.597413] brcmfmac 0000:02:00.0: brcmf_pcie_bus_console_read: CONSOLE: hndarm_armr addr: 0x18002000, cr4_idx: 0
+[   19.597469] brcmfmac 0000:02:00.0: brcmf_pcie_bus_console_read: CONSOLE: 000000.001 
+[   19.597628] brcmfmac 0000:02:00.0: brcmf_pcie_bus_console_read: CONSOLE: RTE (PCIE-MSG_BUF) 7.35.177.61 (r598657) on BCM43602 r2 @ 40.0/160.0/160.0MHz
+[   19.597727] brcmfmac 0000:02:00.0: brcmf_pcie_bus_console_read: CONSOLE: 000000.017 allocating a max of 511 rxcplid buffers
+[   19.597812] brcmfmac 0000:02:00.0: brcmf_pcie_bus_console_read: CONSOLE: 000000.017 pciemsgbuf0: Broadcom PCIE MSGBUF driver
+[   19.597913] brcmfmac 0000:02:00.0: brcmf_pcie_bus_console_read: CONSOLE: 000000.032 reclaim section 0: Returned 52812 bytes to the heap
+[   19.597981] brcmfmac 0000:02:00.0: brcmf_pcie_bus_console_read: CONSOLE: 000000.105 TCAM: 256 used: 241 exceed:0
+[   19.598083] brcmfmac 0000:02:00.0: brcmf_pcie_bus_console_read: CONSOLE: 000000.106 reclaim section 1: Returned 156416 bytes to the heap
+[   19.598092] ieee80211 phy0: brcmf_fw_crashed: Firmware has halted or crashed
+
+--- SPI BUILD ATTEMPT ---
+Deprecated feature: CLEAN (/var/lib/dkms/macbook12-spi-driver/0+git.315/source/dkms.conf)
+Sign command: /usr/lib/modules/6.12.74-1-lts/build/scripts/sign-file
+Signing key: /var/lib/dkms/mok.key
+Public certificate (MOK): /var/lib/dkms/mok.pub
+
+Building module(s).....(bad exit status: 2)
+Failed command:
+make -j4 KERNELRELEASE=6.12.74-1-lts KDIR=/usr/lib/modules/6.12.74-1-lts/build
+
+Error! Bad return status for module build on kernel: 6.12.74-1-lts (x86_64)
+Consult /var/lib/dkms/macbook12-spi-driver/0+git.315/build/make.log for more information.
+
+--- AUDIO BUILD ATTEMPT ---
+Module snd-hda-macbookpro/0.1 for kernel 6.12.74-1-lts (x86_64):
+Before uninstall, this module version was ACTIVE on this kernel.
+Deleting /usr/lib/modules/6.12.74-1-lts/updates/dkms/snd-hda-codec-cs8409.ko.zst
+Restoring archived original module /usr/lib/modules/6.12.74-1-lts/updates/snd-hda-codec-cs8409.ko.zst
+Running depmod........ done.
+
+Found pre-existing /usr/lib/modules/6.12.74-1-lts/updates/snd-hda-codec-cs8409.ko.zst, archiving for uninstallation
+Installing /usr/lib/modules/6.12.74-1-lts/updates/dkms/snd-hda-codec-cs8409.ko.zst
+Running depmod... done.
+
+--- MODPROBE CONFIGS ---
+/etc/modprobe.d/hyprlain-mac-wifi.conf:# Blacklist conflicting modules for MacBook Broadcom chips
+/etc/modprobe.d/hyprlain-mac-wifi.conf:blacklist wl
+/etc/modprobe.d/hyprlain-mac-wifi.conf:blacklist b43
+/etc/modprobe.d/hyprlain-mac-wifi.conf:blacklist bcma
+/etc/modprobe.d/hyprlain-mac-wifi.conf:blacklist brcmsmac
+/etc/modprobe.d/hyprlain-mac-wifi.conf:# Prefer brcmfmac and disable power management for stability
+/etc/modprobe.d/hyprlain-mac-wifi.conf:options brcmfmac roamoff=1
+/etc/modprobe.d/hyprlain-mac-audio.conf:# Force apple-generic model for CS8409 codec (MBP 13,2/13,3)
+/etc/modprobe.d/hyprlain-mac-audio.conf:options snd-hda-intel model=apple-generic
+/etc/modprobe.d/apple-audio.conf:# Force macbook-pro-v1 model for CS8409 codec (MBP 13,2/13,3)
+/etc/modprobe.d/apple-audio.conf:# Ref: Davidjo/snd_hda_macbookpro
+/etc/modprobe.d/apple-audio.conf:options snd-hda-intel model=macbook-pro-v1
+
+--- FIRMWARE ---
+-rw-r--r-- 1 root root 349848 Feb 22 00:18 /lib/firmware/brcm/brcmfmac43602-pcie.ap.bin.zst
+-rw-r--r-- 1 root root 366012 Feb 22 00:18 /lib/firmware/brcm/brcmfmac43602-pcie.bin.zst
+-rw-r--r-- 1 root root   6051 Feb 27 13:42 /lib/firmware/brcm/brcmfmac43602-pcie.txt
+
+--- ALSA ---
+ 0 [PCH            ]: HDA-Intel - HDA Intel PCH
+                      HDA Intel PCH at 0x82620000 irq 87
