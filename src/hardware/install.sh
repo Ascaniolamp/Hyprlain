@@ -88,16 +88,23 @@ EOF"
     sudo dkms install -m macbook12-spi-driver -v 0+git.315 -k "$(uname -r)" --force || true
 
     # 3. Audio Fix: Cirrus Logic Driver & Model Override
+    echo -e "${YELLOW}Installing Cirrus Logic Audio driver dependencies...${NOCOLOR}"
+    # Resolve "Dummy Output" issues with UCM and firmware
+    getpkg "alsa-ucm-conf"
+    getpkg "sof-firmware"
+
     echo -e "${YELLOW}Installing Cirrus Logic Audio driver...${NOCOLOR}"
     getpkg "snd-hda-macbookpro-dkms-git" 
     # Force rebuild for 6.x kernels - handle existing unversioned modules
     sudo dkms install -m snd-hda-macbookpro -v 0.1 -k "$(uname -r)" --force || true
 
     echo -e "${YELLOW}Applying Audio model overrides...${NOCOLOR}"
-    AUDIO_CONF="/etc/modprobe.d/hyprlain-mac-audio.conf"
+    # Per user research: macbook-pro-v1 is superior for 13,2 model
+    AUDIO_CONF="/etc/modprobe.d/apple-audio.conf"
     sudo bash -c "cat > $AUDIO_CONF <<EOF
-# Force apple-generic model for CS8409 codec (MBP 13,2/13,3)
-options snd-hda-intel model=apple-generic
+# Force macbook-pro-v1 model for CS8409 codec (MBP 13,2/13,3)
+# Ref: Davidjo/snd_hda_macbookpro
+options snd-hda-intel model=macbook-pro-v1
 EOF"
 
     # 4. Final Polish: Fix ownership of config files (installer often leaves them as root)
