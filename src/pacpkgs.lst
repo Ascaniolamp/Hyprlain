@@ -1,3 +1,5 @@
 unzip
 jq
 git
+alsa-ucm-conf
+sof-firmware
