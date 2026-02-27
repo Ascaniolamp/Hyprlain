@@ -2,7 +2,6 @@
 	"layer": "top",
 	"position": "top",
 	"height": 24,
-	"width": 1431,
 	"spacing": 0,
 	"modules-left": [
 		"hyprland/workspaces"
@@ -123,12 +122,9 @@
 		],
 		"on-click-right": "missioncenter"
 	},
-
 	"custom/expand": {
-		"format": " ", 
+		"format": " ",
 		"tooltip": false
-	},
-
 	},
 	"cpu": {
 		"format": "",
