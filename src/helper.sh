@@ -143,7 +143,6 @@ function handleold () {
 			;;
 
 		"backup" | "--force-mac")
-			)
 			sudo rm -r "${DIRFILE}.hyprlainbak" || true
 			sudo mv "$DIRFILE" "${DIRFILE}.hyprlainbak" || true
 			;;
