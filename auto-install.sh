@@ -32,7 +32,7 @@ fi
 # Run the main installation script and default to backup
 cd src
 echo -e "${YELLOW}Running main installation script...${NOCOLOR}"
-./install.sh backup
+./install.sh backup "$@"
 
 # Enable SDDM
 echo -e "${YELLOW}Enabling SDDM...${NOCOLOR}"

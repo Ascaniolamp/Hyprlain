@@ -1,5 +1,6 @@
 [General]
 frontend=widgetsboxmodel
+hotkey=Ctrl+Space
 showTray=false
 telemetry=false
 
@@ -22,7 +23,7 @@ clientShadow=true
 darkTheme=Hyprlain
 displayScrollbar=false
 followCursor=true
-hideOnFocusLoss=true
+hideOnFocusLoss=false
 historySearch=true
 itemCount=3
 lightTheme=Hyprlain
@@ -34,7 +35,7 @@ systemShadow=true
 alwaysOnTop=true
 clearOnHide=true
 displayScrollbar=false
-hideOnFocusLoss=true
+hideOnFocusLoss=false
 historySearch=true
 itemCount=5
 showCentered=true

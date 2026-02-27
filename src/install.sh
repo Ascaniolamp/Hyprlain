@@ -3,6 +3,11 @@ THISDIR=$(dirname "$(realpath "$0")")
 GITSRC="${THISDIR}"
 source "${THISDIR}/helper.sh"
 
+if [[ "$*" == *"--force-mac"* ]]; then
+    export FORCE_MAC=1
+    echo -e "${GREEN}Forcing MacBook Pro hardware fixes for portable USB...${NOCOLOR}"
+fi
+
 if ! helpersourced; then
 	echo -e "${RED}ERROR! Couldn't source necessary helper script.${NOCOLOR}"
 	exit 1
@@ -25,6 +30,7 @@ else
 	echo -e "${GREEN}AdwaitaMono Nerd Font already installed, skipping download...${NOCOLOR}"
 fi
 
+"${GITSRC}/hardware/install.sh" "$BAKORDEL"
 "${GITSRC}/albert/install.sh" "$BAKORDEL"
 "${GITSRC}/dotfiles/install.sh" "$BAKORDEL"
 "${GITSRC}/gtkqtxdg/install.sh" "$BAKORDEL"

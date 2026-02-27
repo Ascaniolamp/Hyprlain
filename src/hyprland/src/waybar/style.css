@@ -2,17 +2,21 @@
 
 * {
 	font-family: "AdwaitaMono Nerd Font";
-	font-size: 16px;
+	font-size: 14px;
 	font-weight: bold;
 	color: @highprimary;
 }
 
 window#waybar {
-	background-color: @backprimary;
-	border: solid @foreprimary;
-	border-width: 0px 2px 2px 2px;
-	transition-property: background-color;
-	transition-duration: 0.5s;
+    background-color: @backprimary;
+    border: solid @foreprimary;
+    border-width: 2px; 
+    
+    /* Remove the margin line from here */
+
+    border-radius: 0px; 
+    transition-property: background-color;
+    transition-duration: 0.5s;
 }
 
 button,

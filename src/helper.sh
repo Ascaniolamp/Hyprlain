@@ -86,7 +86,8 @@ function confirmNy() { # confirmNy <TXT>
 	_confirm "$1 (y/N): " "N"
 }
 
-BAKORDEL="backup"
+BAKORDEL="backup" | "--force-mac")
+			
 ARGUMENT="$1"
 if ! [ $# -eq 0 ] && ! [ -z "$ARGUMENT" ]; then
 	case "$ARGUMENT" in
@@ -102,7 +103,8 @@ if ! [ $# -eq 0 ] && ! [ -z "$ARGUMENT" ]; then
 			fi
 		;;
 
-		"backup");;
+		"backup" | "--force-mac")
+			);;
 
 		*)
 			echo -e "${RED}install.sh: unrecognized option '$ARGUMENT'${NOCOLOR}"
@@ -141,7 +143,8 @@ function handleold () {
 			sudo rm -r "$DIRFILE" || true
 			;;
 
-		"backup")
+		"backup" | "--force-mac")
+			)
 			sudo rm -r "${DIRFILE}.hyprlainbak" || true
 			sudo mv "$DIRFILE" "${DIRFILE}.hyprlainbak" || true
 			;;

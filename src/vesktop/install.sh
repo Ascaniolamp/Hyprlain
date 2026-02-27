@@ -10,7 +10,11 @@ fi
 
 downdependencies "${GITSRC}/pacpkgs.lst" "${GITSRC}/aurpkgs.lst"
 
-substitute "$BAKORDEL" "${HOME}/.config/vesktop/settings/settings.json" "${GITSRC}/settings.json"
-substitute "$BAKORDEL" "${HOME}/.config/vesktop/themes/hyprlain.theme.css" "${GITSRC}/hyprlain.theme.css"
-
-echo -e "${GREEN}Vesktop Hyprlain theme installed successfully.${NOCOLOR}"
+# Only apply if the theme file exists in the source
+if [ -f "${GITSRC}/hyprlain.theme.css" ]; then
+    substitute "$BAKORDEL" "${HOME}/.config/vesktop/settings/settings.json" "${GITSRC}/settings.json"
+    substitute "$BAKORDEL" "${HOME}/.config/vesktop/themes/hyprlain.theme.css" "${GITSRC}/hyprlain.theme.css"
+    echo -e "${GREEN}Vesktop Hyprlain theme installed successfully.${NOCOLOR}"
+else
+    echo -e "${YELLOW}Vesktop theme source not found, skipping theme apply.${NOCOLOR}"
+fi
