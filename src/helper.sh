@@ -86,8 +86,7 @@ function confirmNy() { # confirmNy <TXT>
 	_confirm "$1 (y/N): " "N"
 }
 
-BAKORDEL="backup" | "--force-mac")
-			
+BAKORDEL="backup"
 ARGUMENT="$1"
 if ! [ $# -eq 0 ] && ! [ -z "$ARGUMENT" ]; then
 	case "$ARGUMENT" in
@@ -104,7 +103,7 @@ if ! [ $# -eq 0 ] && ! [ -z "$ARGUMENT" ]; then
 		;;
 
 		"backup" | "--force-mac")
-			);;
+			;;
 
 		*)
 			echo -e "${RED}install.sh: unrecognized option '$ARGUMENT'${NOCOLOR}"
