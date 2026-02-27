@@ -41,12 +41,11 @@ if [ "$IS_MAC" -eq 1 ]; then
     # 1. Wifi Fix: Module Blacklisting & Firmware
     echo -e "${YELLOW}Configuring Wifi modules (Broadcom)...${NOCOLOR}"
     
-    # Use MikeRatcliffe's Gist for the 13,2 firmware configuration
-    if [ ! -f "/lib/firmware/brcm/brcmfmac43602-pcie.txt" ]; then
+    # Use MikeRatcliffe's Gist for the 13,2 firmware configuration (Verified link)
+    if [ ! -f "/lib/firmware/brcm/brcmfmac43602-pcie.txt" ] || [ $(stat -c%s "/lib/firmware/brcm/brcmfmac43602-pcie.txt") -lt 100 ]; then
         echo -e "${YELLOW}Downloading Broadcom firmware configuration...${NOCOLOR}"
         sudo mkdir -p /lib/firmware/brcm
-        # This gist contains the exact .txt for MBP 13,2
-        sudo curl -L https://gist.githubusercontent.com/MikeRatcliffe/7a06a096c4d81230e70a3597d512f451/raw/brcmfmac43602-pcie.txt -o /lib/firmware/brcm/brcmfmac43602-pcie.txt
+        sudo curl -L https://gist.githubusercontent.com/MikeRatcliffe/9614c16a8ea09731a9d5e91685bd8c80/raw/brcmfmac43602-pcie.txt -o /lib/firmware/brcm/brcmfmac43602-pcie.txt
     fi
     
     WIFI_CONF="/etc/modprobe.d/hyprlain-mac-wifi.conf"
@@ -68,13 +67,20 @@ EOF"
     # Patch the source in /usr/src for kernel 6.x compatibility
     SPI_SRC_DIR=$(ls -d /usr/src/macbook12-spi-driver-* 2>/dev/null | tail -n 1)
     if [ -n "$SPI_SRC_DIR" ]; then
-        echo -e "${YELLOW}Patching SPI driver source in $SPI_SRC_DIR...${NOCOLOR}"
+        echo -e "${YELLOW}Patching SPI driver source in $SPI_SRC_DIR for kernel 6.x...${NOCOLOR}"
         # Fix unaligned.h move
         sudo sed -i 's#asm/unaligned.h#linux/unaligned.h#g' "$SPI_SRC_DIR/applespi.c"
         # Fix acpi_driver owner removal
         sudo sed -i 's/\.owner[[:space:]]*=[[:space:]]*THIS_MODULE,//g' "$SPI_SRC_DIR/apple-ibridge.c"
         # Fix report_fixup const return type
         sudo sed -i 's/static __u8 \*appleib_report_fixup/static const __u8 \*appleib_report_fixup/g' "$SPI_SRC_DIR/apple-ibridge.c"
+        # NEW: Fix remove function signature (int -> void) for 6.x kernels
+        sudo sed -i 's/static int appletb_platform_remove/static void appletb_platform_remove/g' "$SPI_SRC_DIR/apple-ib-tb.c"
+        sudo sed -i '/static void appletb_platform_remove/,/}/ s/return 0;//' "$SPI_SRC_DIR/apple-ib-tb.c"
+        sudo sed -i 's/static int appleals_platform_remove/static void appleals_platform_remove/g' "$SPI_SRC_DIR/apple-ib-als.c"
+        sudo sed -i '/static void appleals_platform_remove/,/}/ s/return 0;//' "$SPI_SRC_DIR/apple-ib-als.c"
+        # NEW: Fix no_llseek removal
+        sudo sed -i 's/no_llseek/noop_llseek/g' "$SPI_SRC_DIR/applespi.c"
     fi
 
     export KCFLAGS="-Wno-error=incompatible-pointer-types"
@@ -83,9 +89,8 @@ EOF"
 
     # 3. Audio Fix: Cirrus Logic Driver & Model Override
     echo -e "${YELLOW}Installing Cirrus Logic Audio driver...${NOCOLOR}"
-    # Using the -git version as it's more up-to-date in AUR
     getpkg "snd-hda-macbookpro-dkms-git" 
-    # Force rebuild for 6.x kernels
+    # Force rebuild for 6.x kernels - handle existing unversioned modules
     sudo dkms install -m snd-hda-macbookpro -v 0.1 -k "$(uname -r)" --force || true
 
     echo -e "${YELLOW}Applying Audio model overrides...${NOCOLOR}"
@@ -95,6 +100,9 @@ EOF"
 options snd-hda-intel model=apple-generic
 EOF"
 
+    # 4. Final Polish: Fix ownership of config files (installer often leaves them as root)
+    echo -e "${YELLOW}Restoring user l4in ownership to configuration files...${NOCOLOR}"
+    sudo chown -R l4in:l4in "$HOME/.config" "$HOME/Hyprlain-" 2>/dev/null || true
     echo -e "${GREEN}MacBook hardware fixes applied successfully!${NOCOLOR}"
 else
     echo -e "${YELLOW}No specific MacBook Pro 2016/2017 hardware fixes required for this model.${NOCOLOR}"
