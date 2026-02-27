@@ -132,7 +132,22 @@ EOF"
 options snd-hda-intel model=macbook-pro-v1
 EOF"
 
-    # 4. Final Polish: Fix ownership of config files
+    # 4. TouchBar Support: tiny-dfr
+    echo -e "${YELLOW}Installing TouchBar support (tiny-dfr)...${NOCOLOR}"
+    getpkg "tiny-dfr"
+    sudo systemctl enable --now tiny-dfr 2>/dev/null || true
+
+    # 5. Camera Support: bcwc-pcie
+    echo -e "${YELLOW}Installing FaceTime HD Camera support...${NOCOLOR}"
+    getpkg "bcwc-pcie-git"
+    getpkg "facetimehd-firmware"
+
+    # 6. Thermal & Power: thermald
+    echo -e "${YELLOW}Installing Thermal management (thermald)...${NOCOLOR}"
+    getpkg "thermald"
+    sudo systemctl enable --now thermald 2>/dev/null || true
+
+    # 7. Final Polish: Fix ownership of config files
     echo -e "${YELLOW}Restoring user l4in ownership to configuration files...${NOCOLOR}"
     sudo chown -R l4in:l4in "$HOME/.config" "$HOME/Hyprlain-" 2>/dev/null || true
     echo -e "${GREEN}MacBook hardware fixes applied successfully!${NOCOLOR}"

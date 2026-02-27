@@ -8,15 +8,15 @@
 }
 
 window#waybar {
-    background-color: @backprimary;
-    border: solid @foreprimary;
-    border-width: 2px; 
-    
-    margin: 6px 6px 0px 6px;
+	background-color: @backprimary;
+	border: solid @foreprimary;
+	border-width: 2px;
 
-    border-radius: 0px; 
-    transition-property: background-color;
-    transition-duration: 0.5s;
+	margin: 6px 6px 0px 6px;
+
+	border-radius: 12px;
+	transition-property: background-color;
+	transition-duration: 0.5s;
 }
 
 button,
@@ -74,7 +74,7 @@ tooltip *,
 	padding: 0px 3px 0px 0px;
 }
 
-#tray > .needs-attention,
+#tray>.needs-attention,
 #pulseaudio.muted,
 #temperature.critical,
 #privacy-item.screenshare,
