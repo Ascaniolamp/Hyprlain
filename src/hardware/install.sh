@@ -41,20 +41,12 @@ if [ "$IS_MAC" -eq 1 ]; then
     # 1. Wifi Fix: Module Blacklisting & Firmware
     echo -e "${YELLOW}Configuring Wifi modules (Broadcom)...${NOCOLOR}"
     
-    # Use curl instead of git to avoid any auth issues
-    if [ ! -d "/lib/firmware/brcm/brcmfmac43602-pcie.txt" ]; then
-        echo -e "${YELLOW}Downloading Broadcom firmware...${NOCOLOR}"
-        rm -rf /tmp/mac_fw.tar.gz /tmp/macbook12-brcm-fw
-        curl -L https://github.com/leifliddy/macbook12-brcm-fw/archive/refs/heads/master.tar.gz -o /tmp/mac_fw.tar.gz
-        mkdir -p /tmp/macbook12-brcm-fw
-        tar -xzf /tmp/mac_fw.tar.gz -C /tmp/macbook12-brcm-fw --strip-components=1
-        
-        # Patch out the "Don't run as root" check to avoid sub-sudo issues
-        sed -i 's/if \[ "$EUID" -eq 0 \]/if \[ "$EUID" -eq 9999 \]/g' /tmp/macbook12-brcm-fw/install.sh
-        
-        cd /tmp/macbook12-brcm-fw
-        sudo ./install.sh
-        cd -
+    # Use MikeRatcliffe's Gist for the 13,2 firmware configuration
+    if [ ! -f "/lib/firmware/brcm/brcmfmac43602-pcie.txt" ]; then
+        echo -e "${YELLOW}Downloading Broadcom firmware configuration...${NOCOLOR}"
+        sudo mkdir -p /lib/firmware/brcm
+        # This gist contains the exact .txt for MBP 13,2
+        sudo curl -L https://gist.githubusercontent.com/MikeRatcliffe/7a06a096c4d81230e70a3597d512f451/raw/brcmfmac43602-pcie.txt -o /lib/firmware/brcm/brcmfmac43602-pcie.txt
     fi
     
     WIFI_CONF="/etc/modprobe.d/hyprlain-mac-wifi.conf"
@@ -71,12 +63,21 @@ EOF"
 
     # 2. Input Fix: MacBook SPI Driver
     echo -e "${YELLOW}Installing MacBook SPI driver...${NOCOLOR}"
-    # Setting flags and patching source in yay cache
-    if [ -d "${HOME}/.cache/yay/macbook12-spi-driver-dkms" ]; then
-        find "${HOME}/.cache/yay/macbook12-spi-driver-dkms" -name "*.c" -o -name "*.h" | xargs sed -i 's#asm/unaligned.h#linux/unaligned.h#g' 2>/dev/null || true
-    fi
-    export KCFLAGS="-Wno-error=incompatible-pointer-types"
     getpkg "macbook12-spi-driver-dkms"
+    
+    # Patch the source in /usr/src for kernel 6.x compatibility
+    SPI_SRC_DIR=$(ls -d /usr/src/macbook12-spi-driver-* 2>/dev/null | tail -n 1)
+    if [ -n "$SPI_SRC_DIR" ]; then
+        echo -e "${YELLOW}Patching SPI driver source in $SPI_SRC_DIR...${NOCOLOR}"
+        # Fix unaligned.h move
+        sudo sed -i 's#asm/unaligned.h#linux/unaligned.h#g' "$SPI_SRC_DIR/applespi.c"
+        # Fix acpi_driver owner removal
+        sudo sed -i 's/\.owner[[:space:]]*=[[:space:]]*THIS_MODULE,//g' "$SPI_SRC_DIR/apple-ibridge.c"
+        # Fix report_fixup const return type
+        sudo sed -i 's/static __u8 \*appleib_report_fixup/static const __u8 \*appleib_report_fixup/g' "$SPI_SRC_DIR/apple-ibridge.c"
+    fi
+
+    export KCFLAGS="-Wno-error=incompatible-pointer-types"
     # Ensure it builds for the current kernel
     sudo dkms install -m macbook12-spi-driver -v 0+git.315 -k "$(uname -r)" --force || true
 
