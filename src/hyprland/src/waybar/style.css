@@ -12,9 +12,7 @@ window#waybar {
 	border: solid @foreprimary;
 	border-width: 2px;
 
-	margin: 6px 6px 0px 6px;
-
-	border-radius: 12px;
+	border-radius: 0px;
 	transition-property: background-color;
 	transition-duration: 0.5s;
 }
