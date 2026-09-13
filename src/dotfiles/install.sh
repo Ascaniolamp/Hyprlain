@@ -10,21 +10,27 @@ fi
 
 echo -e "${YELLOW}You might just want to keep these themes for the time in which you'll download their apps.${NOCOLOR}"
 if confirmYN "Would you like to download every theme's relative application?"; then
-	downdependencies "${GITSRC}/pacpkgs.lst" "${GITSRC}/aurpkgs.lst"
+	downdependencies "${GITSRC}"
 fi
 
 substitute "$BAKORDEL" "${HOME}/.local/share/audacious/Skins/lainampborders" "${GITSRC}/audacious/lainampborders"
-echo "skin=${HOME}/.local/share/audacious/Skins/lainampborders" >> "${GITSRC}/audacious/config"
 substitute "$BAKORDEL" "${HOME}/.config/audacious/config" "${GITSRC}/audacious/config"
+appendonce "${HOME}/.config/audacious/config" "skin=${HOME}/.local/share/audacious/Skins/lainampborders"
 
 echo -e "${YELLOW}To install the Firefox theme, follow the README's instructions!${NOCOLOR}"
 
-cat "${GITSRC}/.profile" >> "${HOME}/.profile"
+appendblock "${HOME}/.profile" dotfiles "${GITSRC}/.profile"
 DOTPROFILE_SHLINE="[[ -f ~/.profile ]] && . ~/.profile"
-echo "$DOTPROFILE_SHLINE" >> "${HOME}/.bashrc"
-echo "$DOTPROFILE_SHLINE" >> "${HOME}/.zshrc"
+appendonce "${HOME}/.bashrc" "$DOTPROFILE_SHLINE"
+appendonce "${HOME}/.zshrc" "$DOTPROFILE_SHLINE"
 
-getpkg git
-git clone --depth=1 https://github.com/uiriansan/LainGrubTheme && cd LainGrubTheme && ./install.sh && ./patch_entries.sh
+if [[ "$DISTRO" == "arch" ]]; then
+	getpkg git
+	git clone --depth=1 https://github.com/uiriansan/LainGrubTheme && cd LainGrubTheme && ./install.sh && ./patch_entries.sh
+else
+	# LainGrubTheme targets Arch's GRUB layout; patching boot entries on Fedora
+	# (grub2 + BLS entries, often an NVIDIA akmod setup) risks an unbootable system.
+	echo -e "${YELLOW}Skipping the GRUB theme on Fedora.${NOCOLOR}"
+fi
 
 echo -e "${GREEN}Hyprlain dotfiles installed successfully.${NOCOLOR}"
