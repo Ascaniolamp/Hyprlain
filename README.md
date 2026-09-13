@@ -79,7 +79,32 @@ All of them have been specifically configured with wayland in mind,
 so if you're trying to install them on an X11 DE, you might want to check their options.
 
 - **Arch Linux**: You can either [run the installation scripts](.#Scripts) or follow the [manual installation](.#Manual).
+- **Fedora**: Run the [Fedora installation scripts](.#Fedora).
 - **Other distros**: Only [manual installation](.#Manual) is currently supported.
+
+### Fedora
+Tested on **Fedora 44** (GNOME Workstation, NVIDIA). The same `install.sh` detects Fedora and switches to:
+- `dnf` for packages listed in each module's `dnfpkgs.lst`
+- the [`sdegler/hyprland`](https://copr.fedorainfracloud.org/coprs/sdegler/hyprland/) COPR for Hyprland, hyprlock, hypridle, hyprshot, swww, waypaper, nwg-look and friends
+- per-user Flatpaks (`flatpakpkgs.lst`) for Mission Center, Spotify and Vesktop
+
+```sh
+sudo dnf install -y git && git clone https://github.com/Ascaniolamp/Hyprlain.git && cd Hyprlain/src && ./install.sh
+```
+
+Then log out and pick **Hyprland** from the session menu on the login screen.
+
+Differences from the Arch install:
+- **Login screen**: GDM is kept unless you opt in to the SDDM theme, which asks before disabling GDM.
+- **GRUB theme**: skipped. It targets Arch's GRUB layout and patches boot entries.
+- **AUR-only apps** get Fedora stand-ins: `fastfetch` for neofetch (same logo), `rofimoji` for rofi-emoji,
+  `nm-connection-editor` for iwgtk, `blueman` for overskride. The rofi `calc` mode, woomer and waycorner are disabled.
+- **rose-pine-hyprcursor** is downloaded from its GitHub release into `~/.local/share/icons`.
+- **hypr-dynamic-cursors** isn't built automatically; `plugins.conf` stays commented out until you run
+  `hyprpm add https://github.com/VirtCode/hypr-dynamic-cursors`.
+
+On every distro, NVIDIA environment variables are written to `~/.config/hypr/nvidia.conf` when the driver is loaded.
+Put your own tweaks in `~/.config/hypr/local.conf`: it's sourced last and survives reinstalls.
 
 ### Scripts
 <div align="center">
