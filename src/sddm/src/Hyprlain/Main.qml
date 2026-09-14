@@ -1,9 +1,10 @@
-import QtQuick 2.5
-import QtQuick.Layouts 1.2
-import QtQuick.Controls 1.4 as Qqc
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Window 2.2
-import QtMultimedia 5.5
+// Qt6 port: SDDM 0.21+ ships only the Qt6 greeter on Fedora (and increasingly
+// elsewhere), and Qt6 has no QtQuick.Controls 1 / Controls.Styles.
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls.Basic as Qqc
+import QtQuick.Window
+import QtMultimedia
 import SddmComponents 2.0
 
 Rectangle {
@@ -11,14 +12,19 @@ Rectangle {
 	width: Window.width
 	height: Window.height
 
+	// Login feedback: besides the denied sound, clear the field, show a
+	// message and refocus the password box, so a rejected password is obvious
+	// even with the sound muted.
 	Connections {
 		target: sddm
-
-		onLoginSucceeded: {
+		function onLoginSucceeded() {
+			errorMsg.text = ""
 		}
-
-		onLoginFailed: {
+		function onLoginFailed() {
 			denied.play()
+			errorMsg.text = "Login failed — wrong password?"
+			password.text = ""
+			password.focus = true
 		}
 	}
 
@@ -42,6 +48,8 @@ Rectangle {
 		AnimatedImage{
 			Layout.alignment: Qt.AlignCenter
 			Layout.topMargin: 2
+			Layout.preferredWidth: 192
+			Layout.preferredHeight: 192
 			width: 192
 			height: 192
 			source: "assets/wiredLogInNew_512px_06.gif"
@@ -55,16 +63,15 @@ Rectangle {
 			id: username
 			Layout.alignment: Qt.AlignCenter
 			text: userModel.lastUser
-			style: TextFieldStyle {
-				textColor: "#c1b492"
-				background: Rectangle {
-					color: "#000"
-					implicitWidth: 200
-					border.color: "#d2738a"
-				}
+			color: "#c1b492"
+			background: Rectangle {
+				color: "#000"
+				implicitWidth: 200
+				border.color: username.activeFocus ? "#f5b3c4" : "#d2738a"
+				border.width: username.activeFocus ? 2 : 1
 			}
 			KeyNavigation.backtab: shutdownBtn; KeyNavigation.tab: password
-			Keys.onPressed: {
+			Keys.onPressed: (event) => {
 				if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
 					sddm.login(username.text, password.text, session.index)
 					event.accepted = true
@@ -80,33 +87,39 @@ Rectangle {
 			id: password
 			echoMode: TextInput.Password
 			Layout.alignment: Qt.AlignCenter
-			style: TextFieldStyle {
-				textColor: "#c1b492"
-				background: Rectangle {
-					color: "#000"
-					implicitWidth: 200
-					border.color: "#d2738a"
-				}
+			color: "#c1b492"
+			background: Rectangle {
+				color: "#000"
+				implicitWidth: 200
+				border.color: password.activeFocus ? "#f5b3c4" : "#d2738a"
+				border.width: password.activeFocus ? 2 : 1
 			}
 			KeyNavigation.backtab: username; KeyNavigation.tab: session
-			Keys.onPressed: {
+			Keys.onPressed: (event) => {
 				if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
 					sddm.login(username.text, password.text, session.index)
 					event.accepted = true
 				}
 			}
 		}
-		ColumnLayout {
+		// Caps Lock warning: the single most common cause of a "correct"
+		// password being rejected, and invisible without this.
+		Qqc.Label {
+			Layout.alignment: Qt.AlignCenter
+			text: "⚠ Caps Lock is ON"
+			color: "#ff5c5c"
+			visible: keyboard.capsLock
+		}
+		Rectangle {
 			Layout.alignment: Qt.AlignCenter
 			Layout.topMargin: 4
-			Layout.bottomMargin: 50
-			width: 200
-			Rectangle {
-				anchors.fill: parent
-				color: "#d2738a"
-			}
+			Layout.bottomMargin: 6
+			implicitWidth: 200
+			implicitHeight: loginLabel.implicitHeight + 4
+			color: "#d2738a"
 			Qqc.Label {
-				Layout.alignment: Qt.AlignCenter
+				id: loginLabel
+				anchors.centerIn: parent
 				text: "L o g i n"
 				color: "#c1b492"
 			}
@@ -114,6 +127,14 @@ Rectangle {
 				anchors.fill: parent
 				onClicked: sddm.login(username.text, password.text, session.index)
 			}
+		}
+		// Failure message. Empty until sddm reports a failed login.
+		Qqc.Label {
+			id: errorMsg
+			Layout.alignment: Qt.AlignCenter
+			Layout.bottomMargin: 40
+			text: ""
+			color: "#ff5c5c"
 		}
 	}
 	AnimatedImage {
@@ -176,26 +197,39 @@ Rectangle {
 		focusColor: "#d2738a"
 		hoverColor: "#d2738a"
 		textColor: "#c1b492"
-		arrowIcon: "assets/angle-down.png"
+		arrowIcon: Qt.resolvedUrl("assets/angle-down.png")
 		KeyNavigation.backtab: password; KeyNavigation.tab: rebootBtn;
 	}
-	Audio {
+	// Current keyboard layout, so a wrong-layout password is easy to spot.
+	Qqc.Label {
+		anchors.left: parent.left
+		anchors.leftMargin: 15
+		y: 55
+		text: {
+			var l = keyboard.layouts
+			if (!l || l.length === 0) return ""
+			var cur = l[keyboard.currentLayout]
+			return cur ? "layout: " + cur.shortName : ""
+		}
+		color: "#c1b492"
+	}
+	// Qt6 has no Audio element; SoundEffect plays the same wav assets.
+	SoundEffect {
 		id: bgMusic
 		source: "assets/powerline.wav"
-		autoPlay: true
-		loops: Audio.Infinite
+		loops: SoundEffect.Infinite
 	}
-	Audio {
+	SoundEffect {
 		id: welcome
 		source: "assets/welcome.wav"
-		autoPlay: true
 	}
-	Audio {
+	SoundEffect {
 		id: denied
 		source: "assets/denied.wav"
 	}
-
 	Component.onCompleted: {
+		bgMusic.play()
+		welcome.play()
 		if (username.text == "") {
 			username.focus = true
 		} else {
@@ -203,4 +237,3 @@ Rectangle {
 		}
 	}
 }
-
