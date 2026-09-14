@@ -8,9 +8,16 @@ if ! helpersourced; then
 	exit 1
 fi
 
-downdependencies "${GITSRC}/pacpkgs.lst" "${GITSRC}/aurpkgs.lst"
+downdependencies "${GITSRC}"
 
-substitute "$BAKORDEL" "${HOME}/.config/vesktop/settings/settings.json" "${GITSRC}/settings.json"
-substitute "$BAKORDEL" "${HOME}/.config/vesktop/themes/hyprlain.theme.css" "${GITSRC}/hyprlain.theme.css"
+if [[ "$DISTRO" == "fedora" ]]; then
+	VESKTOP_CONF="${HOME}/.var/app/dev.vencord.Vesktop/config/vesktop"
+else
+	VESKTOP_CONF="${HOME}/.config/vesktop"
+fi
+
+# settings.json enables "hyprlain.theme.css", so the theme must be installed under that name.
+substitute "$BAKORDEL" "${VESKTOP_CONF}/settings/settings.json" "${GITSRC}/settings.json"
+substitute "$BAKORDEL" "${VESKTOP_CONF}/themes/hyprlain.theme.css" "${GITSRC}/hyprlain.css"
 
 echo -e "${GREEN}Vesktop Hyprlain theme installed successfully.${NOCOLOR}"

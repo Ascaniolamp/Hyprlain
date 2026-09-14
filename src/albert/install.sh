@@ -8,7 +8,7 @@ if ! helpersourced; then
 	exit 1
 fi
 
-downdependencies "${GITSRC}/pacpkgs.lst" "${GITSRC}/aurpkgs.lst"
+downdependencies "${GITSRC}"
 
 substitute "$BAKORDEL" "${HOME}/.config/albert/config" "${GITSRC}/config"
 substitute "$BAKORDEL" "/usr/share/albert/widgetsboxmodel/themes/Hyprlain.qss" "${GITSRC}/Hyprlain.qss"

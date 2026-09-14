@@ -6,6 +6,20 @@ YELLOW="\033[0;33m"
 GREEN="\033[0;32m"
 NOCOLOR="\033[0m"
 
+# Supported distros: Arch Linux (pacman + yay) and Fedora (dnf + COPR + Flatpak).
+if [ -f /etc/fedora-release ]; then
+	DISTRO=fedora
+elif command -v pacman &> /dev/null; then
+	DISTRO=arch
+else
+	echo -e "${RED}ERROR! Unsupported distro: Hyprlain supports Arch Linux and Fedora.${NOCOLOR}"
+	exit 1
+fi
+export DISTRO
+
+# Hyprland and most of its tooling aren't in Fedora's official repos.
+FEDORA_COPR="sdegler/hyprland"
+
 function confirmnonroot() {
 	if [ "$EUID" -eq 0 ]; then
 		echo -e "${RED}ERROR! Don't run the script as root, aborting.${NOCOLOR}"
@@ -14,7 +28,7 @@ function confirmnonroot() {
 }
 
 function confirmonline() {
-	if ! ping -c1 -w5 8.8.8.8 &> /dev/null; then
+	if ! ping -c1 -w5 8.8.8.8 &> /dev/null && ! curl -fsS --max-time 5 https://github.com &> /dev/null; then
 		echo -e "${RED}ERROR! System is offline, aborting.${NOCOLOR}"
 		exit 1
 	fi
@@ -23,7 +37,11 @@ function confirmonline() {
 function getsudo() {
 	if ! command -v sudo &> /dev/null; then
 		echo -e "${YELLOW}Command 'sudo' not found, installing...${NOCOLOR}"
-		su -c "pacman -S --noconfirm sudo"
+		if [[ "$DISTRO" == "fedora" ]]; then
+			su -c "dnf install -y sudo"
+		else
+			su -c "pacman -S --noconfirm sudo"
+		fi
 	fi
 }
 
@@ -37,6 +55,16 @@ function getyay() {
 		cd ..
 		rm -rf yay
 	fi
+}
+
+function getfedorarepos() {
+	# Done once per run; every module's downdependencies relies on it.
+	[[ -n "$HYPRLAIN_REPOS_READY" ]] && return 0
+	sudo dnf install -y dnf5-plugins flatpak || true
+	sudo dnf copr enable -y "$FEDORA_COPR" \
+		|| { echo -e "${RED}ERROR! Couldn't enable COPR ${FEDORA_COPR}, aborting.${NOCOLOR}"; exit 1; }
+	flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
+	export HYPRLAIN_REPOS_READY=1
 }
 
 function pause() {
@@ -101,6 +129,7 @@ if ! [ $# -eq 0 ] && ! [ -z "$ARGUMENT" ]; then
 			echo -e "${YELLOW}Usage: install.sh [OPTION]"
 			echo -e "Options:"
 			echo -e "  --no-preserve	Replace old files by deleting them.${NOCOLOR}${RED}[DANGEROUS]${NOCOLOR}"
+			exit 2
 		;;
 	esac
 fi
@@ -115,11 +144,23 @@ getpkg() { # getpkg <CMD> [<PKG>]
 		else
 			echo -e "${YELLOW}Command '${CMD}' not found, installing package '${PKG}'...${NOCOLOR}"
 		fi
-		if pacman -Si --needed --noconfirm "$PKG" &> /dev/null; then
+		if [[ "$DISTRO" == "fedora" ]]; then
+			sudo dnf install -y "$PKG"
+		elif pacman -Si "$PKG" &> /dev/null; then
 			sudo pacman -S --noconfirm "$PKG"
 		else
 			yay -S --needed --noconfirm "$PKG"
 		fi
+	fi
+}
+
+# Files under $HOME must stay owned by the user; only system paths need sudo.
+function _asowner() { # _asowner <PATH> <CMD...>
+	local TARGET="$1"; shift
+	if [[ "$TARGET" == "$HOME"/* ]]; then
+		"$@"
+	else
+		sudo "$@"
 	fi
 }
 
@@ -129,12 +170,14 @@ function handleold () {
 
 	case "$ACTOPTION" in
 		"--no-preserve")
-			sudo rm -r "$DIRFILE" || true
+			_asowner "$DIRFILE" rm -rf "$DIRFILE"
 			;;
 
 		"backup")
-			sudo rm -r "${DIRFILE}.hyprlainbak" || true
-			sudo mv "$DIRFILE" "${DIRFILE}.hyprlainbak" || true
+			if [ -e "$DIRFILE" ]; then
+				_asowner "$DIRFILE" rm -rf "${DIRFILE}.hyprlainbak"
+				_asowner "$DIRFILE" mv "$DIRFILE" "${DIRFILE}.hyprlainbak"
+			fi
 			;;
 
 		*)
@@ -143,7 +186,7 @@ function handleold () {
 		;;
 	esac
 
-	sudo mkdir -p $(dirname "$DIRFILE")
+	_asowner "$DIRFILE" mkdir -p "$(dirname "$DIRFILE")"
 }
 
 function substitute () {
@@ -152,24 +195,78 @@ function substitute () {
 	GITFILE="$3"
 
 	handleold "$ACTOPTION" "$DIRFILE"
-	sudo cp -r "$GITFILE" "$DIRFILE"
+	_asowner "$DIRFILE" cp -r "$GITFILE" "$DIRFILE"
 }
 
+# Append SRCFILE to DEST inside marker comments, replacing any earlier copy,
+# so re-running the installer doesn't stack duplicate blocks.
+function appendblock () { # appendblock <DEST> <NAME> <SRCFILE>
+	local DEST="$1" NAME="$2" SRC="$3"
+	local BEGIN="# >>> hyprlain ${NAME} >>>" END="# <<< hyprlain ${NAME} <<<"
+	touch "$DEST"
+	sed -i "\|^${BEGIN}\$|,\|^${END}\$|d" "$DEST"
+	_endnewline "$DEST"
+	{ echo "$BEGIN"; cat "$SRC"; echo; echo "$END"; } >> "$DEST"
+}
+
+# Several shipped configs lack a trailing newline; appending straight onto
+# them would glue the new line to the file's last line.
+function _endnewline () { # _endnewline <FILE>
+	[ -s "$1" ] && [ -n "$(tail -c1 "$1")" ] && echo >> "$1"
+	return 0
+}
+
+function appendonce () { # appendonce <DEST> <LINE>
+	touch "$1"
+	grep -qxF "$2" "$1" && return 0
+	_endnewline "$1"
+	echo "$2" >> "$1"
+}
+
+# downdependencies <MODULE_SRC_DIR>
+# Arch reads pacpkgs.lst + aurpkgs.lst; Fedora reads dnfpkgs.lst + flatpakpkgs.lst.
 function downdependencies () {
-	PACPKGS="$1"
-	AURPKGS="$2"
+	local SRCDIR="$1"
+	local pkg
+
+	if [[ -n "$HYPRLAIN_SKIP_PACKAGES" ]]; then
+		echo -e "${YELLOW}Skipping packages for ${SRCDIR} (HYPRLAIN_SKIP_PACKAGES set).${NOCOLOR}"
+		return 0
+	fi
+
+	if [[ "$DISTRO" == "fedora" ]]; then
+		getfedorarepos
+		if [ -s "${SRCDIR}/dnfpkgs.lst" ]; then
+			# One transaction is far faster than one dnf call per package; fall
+			# back to per-package so a single missing name doesn't block the rest.
+			mapfile -t PKGS < <(grep -vE '^\s*(#|$)' "${SRCDIR}/dnfpkgs.lst")
+			if (( ${#PKGS[@]} )) && ! sudo dnf install -y "${PKGS[@]}"; then
+				for pkg in "${PKGS[@]}"; do
+					sudo dnf install -y "$pkg" || echo -e "${RED}ERROR! Skipping DNF package: ${pkg}${NOCOLOR}"
+				done
+			fi
+		fi
+		if [ -s "${SRCDIR}/flatpakpkgs.lst" ]; then
+			while read -r pkg; do
+				[[ -z "$pkg" || "$pkg" == \#* ]] && continue
+				flatpak install --user -y --noninteractive flathub "$pkg" \
+					|| echo -e "${RED}ERROR! Skipping Flatpak: ${pkg}${NOCOLOR}"
+			done < "${SRCDIR}/flatpakpkgs.lst"
+		fi
+		return 0
+	fi
 
 	sudo pacman -Syu
 	while read -r pkg; do
 		[[ -z "$pkg" ]] && continue
 		( sudo pacman -S --needed --noconfirm "$pkg" || echo "ERROR! Skipping PACMAN package: $pkg" ) || true
-	done < "$PACPKGS"
+	done < "${SRCDIR}/pacpkgs.lst"
 
 	yay -Syu
 	while read -r pkg; do
 		[[ -z "$pkg" ]] && continue
 		( yay -S --needed --noconfirm "$pkg" || echo "ERROR! Skipping AUR package: $pkg" ) || true
-	done < "$AURPKGS"
+	done < "${SRCDIR}/aurpkgs.lst"
 }
 
 function helpersourced() {
@@ -179,4 +276,4 @@ function helpersourced() {
 confirmnonroot
 confirmonline
 getsudo
-getyay
+[[ "$DISTRO" == "arch" ]] && getyay

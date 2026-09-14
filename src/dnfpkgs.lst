@@ -1,0 +1,5 @@
+unzip
+jq
+git
+wget
+curl

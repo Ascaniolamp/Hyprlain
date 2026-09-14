@@ -128,8 +128,6 @@
 		"format": " ", 
 		"tooltip": false
 	},
-
-	},
 	"cpu": {
 		"format": "",
 		"tooltip": true,
@@ -149,7 +147,7 @@
 		"format": "",
 		"tooltip": true,
 		"tooltip-format": "{used:0.1f}/{total}GiB\t[{percentage}%]\n{swapUsed:0.1f}/{swapTotal}GiB\t[{swapPercentage}%]",
-		"on-click-right": "missioncontrol"
+		"on-click-right": "missioncenter"
 	},
 	"tray": {
 		"icon-size": 16,

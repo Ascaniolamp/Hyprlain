@@ -10,3 +10,4 @@ Website=https://github.com/Ascaniolamp/Hyprlain/sddm, https://github.com/lll2yu/
 MainScript=Main.qml
 Theme-Id=hyprlain
 Theme-API=2.0
+QtVersion=6
