@@ -2,6 +2,10 @@
 -- Hyprlain - Plugins Configuration                      --
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+-- Note: Hyprland requires plugins to be loaded before configuring their settings.
+-- If you use dynamic-cursors (via hyprpm load dynamic-cursors), uncomment below:
+
+--[[
 hl.config({
     plugin = {
         dynamic_cursors = {
@@ -48,3 +52,4 @@ hl.config({
         },
     },
 })
+]]
