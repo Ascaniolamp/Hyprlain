@@ -36,6 +36,9 @@ case $CASE in
 	1)
 		COMMAND="neofetch --source ~/.config/neofetch/logo;read";
 	;;
+	2)
+		COMMAND="btop";
+	;;
 	3)
 		rofi -e "$RANDQUOTE";
 	;;

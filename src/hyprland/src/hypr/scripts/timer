@@ -1,11 +1,8 @@
-#!/usr/bin/env bash
-
-$ALARMAUDIOFILE_PATH="~/.config/assets/media/audi/PhantomStartingScene.mp3"
+#!/bin/env bash
 
 time=$(rofi -dmenu -p 'Timer')
-
 if [ -z "$time" ]; then
-	exit 0
+    exit 2
 fi
 
 # message="$(rofi -dmenu -p 'Message')"
@@ -15,4 +12,4 @@ fi
 
 sleep "$time"
 notify-send "$time up!"
-mpv --no-video $ALARMAUDIOFILE_PATH
+mpv --no-video ~/.config/assets/media/audi/alarm.mp3

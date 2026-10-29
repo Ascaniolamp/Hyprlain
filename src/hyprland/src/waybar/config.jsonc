@@ -2,21 +2,29 @@
 	"layer": "top",
 	"position": "top",
 	"height": 24,
-	"width": 1431,
+	"width": 1431, // 1908
 	"spacing": 0,
+//	"mode": "hide",
+
 	"modules-left": [
 		"hyprland/workspaces"
 	],
+
 	"modules-center": [
 		"hyprland/window"
 	],
+
 	"modules-right": [
 		"pulseaudio",
 		"network",
 		"clock",
 		"group/hiddentray",
 		"custom/power"
+
+		// "privacy",
+		// "keyboard-state"
 	],
+
 	"group/hiddentray": {
 		"orientation": "horizontal",
 		"modules": [
@@ -25,6 +33,7 @@
 			"temperature",
 			"memory",
 			"tray"
+			// "systemd-failed-units",
 		],
 		"drawer": {
 			"transition-duration": 250,
@@ -32,6 +41,7 @@
 			"click-to-reveal": true
 		}
 	},
+
 	"hyprland/workspaces": {
 		"active-only": false,
 		"all-outputs": true,
@@ -53,26 +63,38 @@
 			"focused": "",
 			"default": ""
 		}
+
+		// "persistent-workspaces": {},
+		// "show-special": false,
+		// "special-visible-only": false,
+		// "sort-by": "default",
+		// "window-rewrite": {},
+		// "window-rewrite-default": "?",
+		// "format-window-separator": " ",
+		// "move-to-monitor": false,
+		// "ignore-workspaces": []
 	},
+
 	"hyprland/window": {
 		"format": " {title} ",
-		"separate-outputs": true
+		"separate-outputs": true,
+
+		// "rewrite": {},
+		// "icon": false,
+		// "icon-size": 24
 	},
+
 	"pulseaudio": {
 		"format": "{icon}",
 		"format-bluetooth": "{icon}{volume}%",
 		"format-muted": "",
+		// "format-source": "{volume}%",
+		// "format-source-muted": "",
 		"format-icons": {
 			"alsa_output.pci-0000_00_1f.3.analog-stereo": "",
 			"alsa_output.pci-0000_00_1f.3.analog-stereo-muted": "",
-			"default": [
-				"",
-				""
-			],
-			"speaker": [
-				"",
-				""
-			],
+			"default": ["", ""],
+			"speaker": ["", ""],
 			"speaker-muted": "",
 			"headphone": "",
 			"hands-free": "󱡏",
@@ -82,45 +104,91 @@
 			"portable": "",
 			"car": ""
 		},
+		// "rotate": 0,
+		// "states": [],
+		// "max-length": 100,
 		"scroll-step": 1,
+		// "on-click": "",
+		// "on-click-middle": "",
 		"on-click-right": "easyeffects",
+		// "on-scroll-up": "",
+		// "on-scroll-down": "",
+		// "smooth-scrolling-threshold": 0,
+		// "tooltip": true,
+		// "tooltip-format": "{desc}",
 		"max-volume": 150,
+		// "ignored-sinks": [],
+		// "reverse-scrolling": false,
+		// "reverse-mouse-scrolling": false,
 		"format-alt": "{icon} {volume}%"
 	},
+
 	"network": {
+		// "interface": "",
+		// "interval": 60,
 		"family": "ipv4",
 		"format-ethernet": "󰈀",
 		"format-wifi": "{icon}",
 		"format-linked": "󱘖",
 		"format-disconnected": "󰤮",
-		"format-icons": [
-			"󰤫",
-			"󰤯",
-			"󰤟",
-			"󰤢",
-			"󰤥",
-			"󰤨"
-		],
+		"format-icons": ["󰤫", "󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+		// "rotate": 0,
+		// "max-length": 0,
+		// "on-click": "",
+		// "on-click-middle": "",
 		"on-click-right": "iwgtk",
+		// "on-scroll-up": "",
+		// "on-scroll-down": "",
+		// "smooth-scrolling-threshold": 0,
+		// "tooltip": true,
+		// "tooltip-format": "{ipaddr}",
+		// "tooltip-format-ethernet": "{ipaddr}",
+		// "tooltip-format-wifi": "{ipaddr}",
+		// "tooltip-format-disconnected": "{ipaddr}",
 		"tooltip-format": "{icon} {signalStrength}% [{essid} - {ifname}] {frequency}GHz\n{ipaddr}/{cidr}\nUP[{bandwidthUpBits}] DWN[{bandwidthDownBits}] TOT[{bandwidthTotalBits}]\nGATEWAY: {gwaddr}",
 		"format-alt": "{icon} {signalStrength}%"
 	},
+
 	"clock": {
+		// "interval": 60,
+		// "format": "{:%H:%M}",
+		// "timezone": "Europe/Rome",
+		// "timezones": [],
+		// "locale": "",
+		// "max-length": 0,
+		// "rotate": 0,
+		// "on-click": "",
+		// "on-click-middle": "",
+		// "on-click-right": "",
+		// "on-scroll-up": "",
+		// "on-scroll-down": "",
+		// "smooth-scrolling-threshold": 0,
+		// "tooltip": true,
+		// "tooltip-format": "",
 		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
 		"format-alt": "{:%Y-%m-%d}"
+		// "calendar": {
+		// 	"mode": "month",
+		// 	"mode-mon-col": 3,
+		// 	"weeks-pos": "",
+		// 	"on-scroll": 1
+		// 	"format": {
+		// 		"months": "",
+		// 		"days": "",
+		// 		"weeks": "{:%U}",
+		// 		"weekdays": "",
+		// 		"today": "<b><u>{}</u></b>"
+		// 	}
+		// }
 	},
+
 	"temperature": {
 		"thermal-zone": 2,
 		"hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
 		"critical-threshold": 80,
 		"format": "{icon}",
 		"format-critical": "{temperatureC}°C {icon}",
-		"format-icons": [
-			"",
-			"",
-			"",
-			""
-		],
+		"format-icons": ["", "", "", ""],
 		"on-click-right": "missioncenter"
 	},
 
@@ -129,37 +197,40 @@
 		"tooltip": false
 	},
 
-	},
 	"cpu": {
 		"format": "",
 		"tooltip": true,
-		"format-icons": [
-			"▁",
-			"▂",
-			"▃",
-			"▄",
-			"▅",
-			"▆",
-			"▇",
-			"█"
-		],
+		"format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"],
 		"on-click-right": "hyprsysteminfo"
 	},
+
 	"memory": {
 		"format": "",
 		"tooltip": true,
 		"tooltip-format": "{used:0.1f}/{total}GiB\t[{percentage}%]\n{swapUsed:0.1f}/{swapTotal}GiB\t[{swapPercentage}%]",
 		"on-click-right": "missioncontrol"
 	},
+
 	"tray": {
 		"icon-size": 16,
 		"show-passive-items": true,
 		"smooth-scrolling-threshold": 1.0,
-		"spacing": 0
+		"spacing": 0,
+		// "reverse-direction": false,
+		// "icons": []
 	},
+
 	"custom/power": {
-		"format": " ",
+		"format" : " ",
 		"tooltip": false,
 		"on-click": "wlogout"
+		// "menu": "on-click",
+		// "menu-file": "$HOME/.config/waybar/power_menu.xml",
+		// "menu-actions": {
+		//	"shutdown": "shutdown now",
+		//	"reboot": "reboot",
+		//	"suspend": "systemctl suspend",
+		//	"hibernate": "systemctl hibernate"
+		// }
 	}
 }
